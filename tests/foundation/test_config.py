@@ -62,6 +62,7 @@ def test_invalid_configuration_is_rejected(values):
     "name",
     [
         "database_url",
+        "identity_database_url",
         "supabase_url",
         "jwt_issuer",
         "jwt_jwks_url",

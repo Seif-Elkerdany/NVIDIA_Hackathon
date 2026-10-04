@@ -23,10 +23,14 @@ generate_types = exporter.generate_types
 generated_files = exporter.generated_files
 
 
-def test_export_without_implemented_routes_keeps_ms002_artifacts():
+def test_export_keeps_shared_catalog_and_all_merged_routes():
     first = generated_files()
     assert first == generated_files()
-    assert json.loads(first["openapi.json"]) == build_openapi()
+    assert build_document(FastAPI()) == build_openapi()
+    document = json.loads(first["openapi.json"])
+    assert set(document["paths"]) == {"/api/v1/me"}
+    shared = build_openapi()["components"]["schemas"]
+    assert all(document["components"]["schemas"][name] == schema for name, schema in shared.items())
     for name, content in first.items():
         assert (ROOT / "frontend/src/generated" / name).read_text(encoding="utf-8") == content
 

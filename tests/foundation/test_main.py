@@ -8,10 +8,9 @@ from benefitbridge import main
 from benefitbridge.config import ConfigurationError, Settings
 
 
-def test_development_app_exposes_no_public_endpoints():
+def test_development_app_exposes_only_merged_routes():
     app = main.create_app(Settings())
-    assert app.routes == []
-    assert app.openapi()["paths"] == {}
+    assert set(app.openapi()["paths"]) == {"/api/v1/me"}
     with TestClient(app) as client:
         assert client.get("/api/v1/health/live").status_code == 404
         assert client.get("/docs").status_code == 404

@@ -20,6 +20,7 @@ def production_values():
         "app_env": "production",
         "provider_mode": "real",
         "database_url": "postgresql+psycopg://synthetic:synthetic@localhost/fixture",
+        "identity_database_url": "postgresql+psycopg://identity:synthetic@localhost/fixture",
         "supabase_url": "https://synthetic.example.invalid",
         "jwt_issuer": "https://synthetic.example.invalid/auth/v1",
         "jwt_jwks_url": "https://synthetic.example.invalid/auth/v1/.well-known/jwks.json",

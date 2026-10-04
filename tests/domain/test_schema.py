@@ -5,7 +5,7 @@ import sys
 import pytest
 from fastapi.openapi.models import OpenAPI
 
-from benefitbridge.domain.schema import build_openapi, generated_files, typescript_from_openapi
+from benefitbridge.domain.schema import build_openapi, typescript_from_openapi
 
 from .conftest import ROOT
 
@@ -54,8 +54,10 @@ def test_decimal_union_and_required_nullable_schema():
 
 
 def test_generation_is_deterministic_and_checked_in_outputs_match():
-    first = generated_files()
-    assert first == generated_files()
+    from scripts.export_openapi import generated_files as merged_generated_files
+
+    first = merged_generated_files()
+    assert first == merged_generated_files()
     for name, content in first.items():
         assert (ROOT / "frontend/src/generated" / name).read_text(encoding="utf-8") == content
     assert "any" not in first["api.ts"].split()
