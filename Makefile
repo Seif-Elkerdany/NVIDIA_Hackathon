@@ -8,19 +8,23 @@ RUN = $(UV) run --frozen --offline
         migrate dev-worker schema test-integration test-e2e benchmark release-check
 
 help:
-	@echo MS-001/MS-002: setup dev-db dev-api lint typecheck test-unit check-contract check
+	@echo Commands: setup dev-db migrate dev-api lint typecheck test-unit test-integration check-contract check
 	@echo Requires uv 0.12.23, Python 3.12, Node 22.12+ or 24, pnpm 10.32.1, GNU Make.
 	@echo Docker Compose is required for dev-db. Configure local secrets in .env.
-	@echo Web shell MS-004, migrations MS-007, workers MS-016 and release gates are later tasks.
+	@echo Migrations use DATABASE_URL with migration credentials. Integration tests use a local BB_TEST_DB_URL.
+	@echo Workers MS-016 and release gates are later tasks.
 
 setup:
 	$(UV) sync --frozen --python 3.12
 	$(PNPM) --dir frontend install --frozen-lockfile
 	@echo Installed frozen dependencies. Set POSTGRES_PASSWORD in .env, then make dev-db.
-	@echo Development API has no routes until MS-003. No provider is enabled by default.
+	@echo Set DATABASE_URL with migration credentials and run make migrate. Providers are disabled by default.
 
 dev-db:
 	$(DOCKER) compose up --detach --wait postgres
+
+migrate:
+	$(RUN) alembic -c alembic.ini upgrade head
 
 dev-api:
 	$(RUN) uvicorn benefitbridge.main:create_app --factory --reload --host 127.0.0.1 --port 8000
@@ -39,16 +43,19 @@ typecheck:
 	$(PNPM) --dir frontend typecheck
 
 test-unit:
-	$(RUN) pytest tests/foundation/test_config.py tests/foundation/test_main.py tests/domain/test_catalog.py tests/domain/test_rules.py
+	$(RUN) python -m pytest --suite unit
 	$(PNPM) --dir frontend test
+
+test-integration:
+	$(RUN) python -m pytest --suite integration
 
 # Check the foundation and generated domain contracts; MS-003/005 add route gates.
 check-contract:
-	$(RUN) pytest tests/foundation/test_scaffold.py tests/domain/test_schema.py
+	$(RUN) python -m pytest tests/foundation/test_scaffold.py tests/domain/test_schema.py
 	$(PNPM) --dir frontend typecheck
 
 check: lint typecheck test-unit check-contract
 
 # Absent work is a failing gate, never a successful no-op.
-migrate dev-worker schema test-integration test-e2e benchmark release-check:
+dev-worker schema test-e2e benchmark release-check:
 	$(RUN) python -c "import sys; sys.exit('BLOCKED: $@ requires its owning downstream sprint; see agent.md and sprints.md')"

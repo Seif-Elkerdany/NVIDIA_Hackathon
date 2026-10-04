@@ -5,8 +5,9 @@ at production: its configured server must be an isolated local/test cluster.
 """
 
 import asyncio
-import importlib.util
 import os
+import subprocess
+import sys
 from concurrent.futures import ThreadPoolExecutor
 from datetime import UTC, datetime, timedelta
 from pathlib import Path
@@ -14,9 +15,10 @@ from threading import Barrier
 from uuid import UUID, uuid4
 
 import pytest
+from alembic import command
 from alembic.autogenerate import compare_metadata
+from alembic.config import Config
 from alembic.migration import MigrationContext
-from alembic.operations import Operations
 from sqlalchemy import create_engine, select, text
 from sqlalchemy.engine import make_url
 from sqlalchemy.exc import DBAPIError, IntegrityError
@@ -54,6 +56,7 @@ def database():
         pytest.fail("Database fixtures require a loopback PostgreSQL test cluster")
     suffix = uuid4().hex
     name, app_role, admin_role = (f"bb_test_{kind}_{suffix}" for kind in ("db", "app", "admin"))
+    role_password = "synthetic-ms007-test-role-password"
     server = create_engine(url, isolation_level="AUTOCOMMIT")
     with server.connect() as connection:
         assert (
@@ -63,17 +66,22 @@ def database():
         connection.execute(text(f'CREATE DATABASE "{name}"'))
     admin = create_engine(url.set(database=name))
     try:
-        spec = importlib.util.spec_from_file_location(
-            "identity_migration", ROOT / "backend/migrations/versions/0001_identity.py"
-        )
-        assert spec and spec.loader
-        migration = importlib.util.module_from_spec(spec)
-        spec.loader.exec_module(migration)
         with admin.begin() as connection:
-            with Operations.context(MigrationContext.configure(connection)):
-                migration.upgrade()
-            connection.execute(text(f'CREATE ROLE "{app_role}" LOGIN NOSUPERUSER NOBYPASSRLS'))
-            connection.execute(text(f'CREATE ROLE "{admin_role}" LOGIN NOSUPERUSER NOBYPASSRLS'))
+            config = Config(str(ROOT / "alembic.ini"))
+            config.attributes["connection"] = connection
+            command.upgrade(config, "head")
+            assert (
+                connection.scalar(text("SELECT version_num FROM alembic_version"))
+                == "0001_identity"
+            )
+            # These literal values are fixture-owned, never caller-supplied SQL.
+            for role in (app_role, admin_role):
+                connection.execute(
+                    text(
+                        f'CREATE ROLE "{role}" LOGIN NOSUPERUSER NOBYPASSRLS '
+                        f"PASSWORD '{role_password}'"
+                    )
+                )
             connection.execute(text(f'GRANT benefitbridge_app TO "{app_role}"'))
             connection.execute(text(f'GRANT benefitbridge_identity_admin TO "{admin_role}"'))
             # Test the boolean definer lookup with a non-superuser function owner.
@@ -84,8 +92,8 @@ def database():
                     f'OWNER TO "{admin_role}"'
                 )
             )
-        app_url = url.set(database=name, username=app_role, password=None)
-        identity_url = url.set(database=name, username=admin_role, password=None)
+        app_url = url.set(database=name, username=app_role, password=role_password)
+        identity_url = url.set(database=name, username=admin_role, password=role_password)
         identity = create_engine(identity_url)
         with identity.begin() as connection:
             for owner, profile, version, fact in (
@@ -163,6 +171,29 @@ def test_migration_and_rls_fail_closed_and_pool_context_is_local(database):
             assert connection.scalar(text("SELECT id FROM profiles")) == PROFILE_B
     finally:
         app.dispose()
+
+
+def test_migration_cli_reuses_persisted_head(database):
+    admin, app, _, _ = database
+    app.dispose()
+    environment = {
+        **os.environ,
+        "DATABASE_URL": admin.url.set(
+            password=admin.url.password or "synthetic-test-password"
+        ).render_as_string(hide_password=False),
+        "APP_ENV": "test",
+    }
+    result = subprocess.run(
+        [sys.executable, "-m", "alembic", "-c", str(ROOT / "alembic.ini"), "upgrade", "head"],
+        cwd=ROOT,
+        env=environment,
+        capture_output=True,
+        text=True,
+        timeout=30,
+    )
+    assert result.returncode == 0, "Alembic CLI failed to load the persisted migration head"
+    with admin.connect() as connection:
+        assert connection.scalar(text("SELECT version_num FROM alembic_version")) == "0001_identity"
 
 
 def test_migration_matches_typed_metadata_and_initial_empty_profile(database):
