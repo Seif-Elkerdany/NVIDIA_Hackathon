@@ -34,6 +34,27 @@ fails for unsupported schema shapes. Runtime cross-field and numerical constrain
 stay in Python. `build_openapi()` is the integration interface for MS-003; that task
 owns `make schema` and M6/MS-005 owns expanding the existing contract/test gates.
 
+`make check` includes the foundation and domain tests, generated-artifact drift
+checks and the TypeScript contract assertions in `tests/domain.test.ts`. Pytest
+uses `.pytest_cache/tmp` so it does not depend on the system temporary directory.
+Each run clears that test directory; concurrent runs need separate `--basetemp`
+paths. Git keeps text files in LF format to match the formatting checks on Windows.
+
+In PowerShell, use `python -m uv` and `pnpm.cmd` if executable discovery or script
+execution policy prevents invoking the package managers directly:
+
+```powershell
+python -m uv sync --frozen --python 3.12
+pnpm.cmd --dir frontend install --frozen-lockfile
+python -m uv run --frozen --offline pytest
+python -m uv run --frozen --offline ruff check backend tests
+python -m uv run --frozen --offline ruff format --check backend tests
+python -m uv run --frozen --offline mypy
+python -m uv run --frozen --offline python -m benefitbridge.domain.schema --check
+pnpm.cmd --dir frontend lint
+pnpm.cmd --dir frontend test
+```
+
 `reference_data.json` contains country codes and timezone **names**, extracted from
 public-domain IANA tzdb 2026e (`iso3166.tab`, Zone records and backward-compatible
 Link records). Its source URL and archive SHA-256 are recorded in the file. This

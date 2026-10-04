@@ -48,5 +48,6 @@ plugins = ["pydantic.mypy"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
-addopts = "--strict-config --strict-markers"
+# Keep synthetic test files in a writable project cache on Windows and Linux.
+addopts = "--strict-config --strict-markers --basetemp=.pytest_cache/tmp"
 filterwarnings = ["error"]

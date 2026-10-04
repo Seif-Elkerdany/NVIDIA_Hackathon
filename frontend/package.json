@@ -17,7 +17,7 @@
     "dev": "vite --host 127.0.0.1",
     "build": "vite build",
     "lint": "prettier --check package.json tests && pnpm typecheck",
-    "typecheck": "tsc --noEmit --strict --noUnusedLocals --noUnusedParameters --target ES2022 --module ESNext --moduleResolution bundler --jsx react-jsx --lib ES2022,DOM,DOM.Iterable tests/scaffold.tsx",
+    "typecheck": "tsc --noEmit --strict --noUnusedLocals --noUnusedParameters --target ES2022 --module ESNext --moduleResolution bundler --jsx react-jsx --lib ES2022,DOM,DOM.Iterable tests/scaffold.tsx tests/domain.test.ts",
     "test": "node --test tests/scaffold.test.mjs"
   },
   "dependencies": {

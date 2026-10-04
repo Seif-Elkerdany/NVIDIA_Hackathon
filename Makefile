@@ -8,7 +8,7 @@ RUN = $(UV) run --frozen --offline
         migrate dev-worker schema test-integration test-e2e benchmark release-check
 
 help:
-	@echo MS-001: setup dev-db dev-api lint typecheck test-unit check-contract check
+	@echo MS-001/MS-002: setup dev-db dev-api lint typecheck test-unit check-contract check
 	@echo Requires uv 0.12.23, Python 3.12, Node 22.12+ or 24, pnpm 10.32.1, GNU Make.
 	@echo Docker Compose is required for dev-db. Configure local secrets in .env.
 	@echo Web shell MS-004, migrations MS-007, workers MS-016 and release gates are later tasks.
@@ -39,12 +39,13 @@ typecheck:
 	$(PNPM) --dir frontend typecheck
 
 test-unit:
-	$(RUN) pytest tests/foundation/test_config.py tests/foundation/test_main.py
+	$(RUN) pytest tests/foundation/test_config.py tests/foundation/test_main.py tests/domain/test_catalog.py tests/domain/test_rules.py
 	$(PNPM) --dir frontend test
 
-# MS-002/003/005 extend this gate with generated domain and route contracts.
+# Check the foundation and generated domain contracts; MS-003/005 add route gates.
 check-contract:
-	$(RUN) pytest tests/foundation/test_scaffold.py
+	$(RUN) pytest tests/foundation/test_scaffold.py tests/domain/test_schema.py
+	$(PNPM) --dir frontend typecheck
 
 check: lint typecheck test-unit check-contract
 
