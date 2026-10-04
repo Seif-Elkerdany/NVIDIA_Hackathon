@@ -1,0 +1,35 @@
+.auth-form {
+  display: grid;
+  gap: var(--space-4);
+  max-width: 34rem;
+}
+.auth-form label {
+  display: grid;
+  gap: var(--space-2);
+  font-weight: 600;
+}
+.auth-form input {
+  width: 100%;
+  min-width: 0;
+  padding: 0.75rem;
+  border: 1px solid var(--border);
+  border-radius: 0.5rem;
+  background: var(--surface);
+  color: inherit;
+  font: inherit;
+}
+.auth-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  margin: var(--space-4) 0;
+}
+.auth-check {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-2);
+}
+.auth-notice {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
