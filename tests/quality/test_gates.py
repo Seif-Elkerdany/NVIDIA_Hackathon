@@ -64,7 +64,7 @@ def test_live_is_excluded_and_suites_select_real_tests(
             "--suite",
             suite,
             "--basetemp",
-            str(tmp_path / "child-temp"),
+            str(tmp_path / "missing-parent" / "child-temp"),
             "-q",
         ],
         cwd=ROOT,

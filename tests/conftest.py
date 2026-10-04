@@ -30,6 +30,10 @@ def pytest_addoption(parser: pytest.Parser) -> None:
 
 
 def pytest_configure(config: pytest.Config) -> None:
+    # pytest creates basetemp itself, but not a missing parent on a fresh checkout.
+    base = config.getoption("basetemp")
+    if base is not None:
+        Path(base).resolve().parent.mkdir(parents=True, exist_ok=True)
     for marker in ("integration: in-process/local integration", "live: paid provider execution"):
         config.addinivalue_line("markers", marker)
     live = config.getoption("suite") == "live"
