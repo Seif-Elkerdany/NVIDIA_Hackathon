@@ -17,8 +17,8 @@ def test_development_app_exposes_no_public_endpoints():
         assert client.get("/docs").status_code == 404
 
 
-def test_production_requires_registry_even_with_all_secrets(production_values):
-    with pytest.raises(ConfigurationError, match="MS-003 API registry"):
+def test_production_requires_p0_routers_even_with_all_secrets(production_values):
+    with pytest.raises(ConfigurationError, match="Missing required P0/feature routers"):
         main.create_app(Settings(**production_values))
 
 
