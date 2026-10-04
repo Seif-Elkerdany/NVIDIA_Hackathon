@@ -111,7 +111,7 @@ def test_workflow_is_fail_closed_and_has_no_live_provider_job() -> None:
         if "uses" in step:
             assert len(step["uses"].split("@")[1]) == 40
     gates = steps[-1]["run"]
-    assert "sudo unshare --net" in gates
+    assert "sudo --preserve-env=HOME unshare --net" in gates
     assert "--bounding-set=-all --no-new-privs" in gates
     assert "--suite unit" in gates and "--suite integration" in gates
     assert "scripts/check_contract.py" in gates

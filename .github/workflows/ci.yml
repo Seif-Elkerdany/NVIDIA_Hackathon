@@ -61,7 +61,7 @@ jobs:
           pnpm --dir frontend build
           GATES
           # Covers Node and subprocesses too. Failure to isolate is a red gate.
-          sudo unshare --net -- bash -euo pipefail -c '
+          sudo --preserve-env=HOME unshare --net -- bash -euo pipefail -c '
             ip link set lo up
             test -z "$(ip route show default)"
             test -z "$(ip -6 route show default)"
