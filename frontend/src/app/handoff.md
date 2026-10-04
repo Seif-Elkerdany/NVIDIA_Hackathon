@@ -1,95 +1,80 @@
-# MS-004 implementation handoff — M2 to M6
+# MS-004 handoff — M2 to M6
 
-Branch: `feat/ms-004-ui-base`, based on merged MS-002/MS-003 at `80db101`.
-MS-002 prerequisite verified: generated `components`, domain status enums, Problem,
-Capabilities and their envelopes exist. No shared schema was changed.
+Implemented on `feat/ms-004-ui-base`, based on merged MS-002/MS-003 at `80db101`.
+The user approved the necessary HTML/package/lockfile handoff and instructed merge
+and push. MS-002 generated DTOs and enums were verified before implementation.
 
-## Behavior and paths
+## Delivered behavior
 
-- R12.01 / US-12.01: `app/App.tsx` provides the account, consent, profile/goal,
-  optional-document and discovery route sequence. It also provides saved,
-  application and settings shells. Account/profile operations remain with their
-  downstream owners; the shell reports absence honestly.
+- R12.01 / US-12.01: `app/App.tsx` supplies accessible account, consent,
+  profile/goal, optional-document and discovery navigation, plus saved,
+  application and settings route shells. Documents are explicitly optional.
 - R12.03 / US-12.03: `components/StateView.tsx`, `StatusLabel.tsx` and `lib/api.ts`
-  provide loading, empty, partial, unknown, stale, unavailable, cancelled and
-  structured-error conventions. TanStack Query owns fetched capabilities;
-  requests have a finite timeout, no automatic retry loop, explicit retry and
-  browser cancellation. No server cancellation endpoint is invoked.
-- R12.04 / US-12.04: `app/App.tsx` and `styles/` provide semantic navigation,
-  current-link labels, a skip link, route-heading focus, history, visible focus,
-  responsive layout, text state labels and reduced-motion support.
-- `components/PlainText.tsx` escapes provider text. No raw HTML/Markdown renderer
-  exists. `tests/mockTransport.ts` uses generated DTOs and the real transport
-  interface; the production entrypoint never imports it.
-- `app/main.tsx` defaults to real same-origin fetch; `app/vite.config.ts` proxies
-  development `/api` requests to the existing local API on port 8000.
+  expose empty, loading, partial, unknown, stale, unavailable, cancelled and error
+  states. Structured errors show field messages and request references. TanStack
+  Query owns capabilities data. Finite timeouts, explicit retries and abort signals
+  stop browser requests without invoking durable server cancellation.
+- R12.04 / US-12.04: `app/App.tsx` and `styles/` supply semantic landmarks,
+  current-link labels, skip navigation, route-heading focus, browser history,
+  responsive layout, visible focus, text labels and reduced-motion support.
+- `components/PlainText.tsx` escapes untrusted provider text. Typed synthetic
+  transports and state fixtures live only under tests and are absent from the
+  production bundle. The live entry never falls back to synthetic account data.
+- `index.html`, `package.json`, `pnpm-lock.yaml`, `app/main.tsx` and
+  `app/vite.config.ts` wire the real shell. Development `/api` traffic proxies to
+  the existing API at `http://127.0.0.1:8000`; production uses same-origin HTTPS.
 
-## Actual verification
+## Dependency and contract impact
 
-Commands from the repository root unless otherwise noted:
+Exact runtime dependencies: React Router 7.18.4 and TanStack Query 5.104.1 (MIT).
+Router 7 preserves the repository's Node >=22.12 contract; Router 8.4 requires
+Node >=22.22. Vite was patched from 7.3.1 to 7.3.6 (MIT), removing its high-severity
+advisories. No migrations, DTO/enum changes, generated drift or public endpoints.
+No paid providers were called.
 
-| Command                                                                                                                                                                               | Actual outcome                                                                                                                                                               |
-| ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `python -m uv run --frozen --offline ruff check backend tests`                                                                                                                        | Passed                                                                                                                                                                       |
-| `python -m uv run --frozen --offline mypy`                                                                                                                                            | Passed: 14 source files                                                                                                                                                      |
-| `python -m uv run --frozen --offline pytest -q`                                                                                                                                       | 345 passed                                                                                                                                                                   |
-| `pnpm.cmd --dir frontend lint`                                                                                                                                                        | Passed existing gates                                                                                                                                                        |
-| `pnpm.cmd --dir frontend typecheck`                                                                                                                                                   | Passed existing scaffold/domain checks                                                                                                                                       |
-| `pnpm.cmd --dir frontend test`                                                                                                                                                        | 2 passed                                                                                                                                                                     |
-| `node --test tests/api.test.mjs` (frontend cwd)                                                                                                                                       | 9 passed                                                                                                                                                                     |
-| `pnpm.cmd exec prettier --check src/app src/components src/lib/api.ts src/styles tests/api.test.mjs tests/mockTransport.ts tests/state-fixture.tsx tests/fixture.html` (frontend cwd) | Passed                                                                                                                                                                       |
-| `python frontend/tests/shell_browser.py http://127.0.0.1:5173`                                                                                                                        | Passed in installed Edge: keyboard skip, focus/history, error/retry, cancellation without server mutation, all state panels, escaped injection text, desktop/mobile overflow |
+The existing transitive esbuild 0.27.7 has one low-severity Windows `servedir`
+advisory. This application does not invoke esbuild's serving API; no incompatible
+transitive override was forced. `pnpm audit --audit-level high` passes.
 
-Full app verification used an ignored isolated copy at `.pytest_cache/ms004-web`
-with React Router 8.4.0 and TanStack Query 5.104.1 installed (both MIT). This avoids
-modifying the dependency files while the requested scope handoff is pending.
-Commands in that copy:
+## Commands and actual outcomes
 
-```powershell
-node node_modules/typescript/bin/tsc --noEmit --strict --noUnusedLocals --noUnusedParameters --target ES2022 --module ESNext --moduleResolution bundler --jsx react-jsx --lib ES2022,DOM,DOM.Iterable src/app/main.tsx src/app/vite.config.ts tests/mockTransport.ts tests/state-fixture.tsx
-node node_modules/vite/bin/vite.js build --config src/app/vite.config.ts
-node node_modules/vite/bin/vite.js --config src/app/vite.config.ts --port 5173 --strictPort
-```
+Commands from the repository root:
 
-Strict app checks and the production bundle passed. Vite emitted benign ignored
-`use client` directives from the two libraries. Desktop 1440px and mobile 390px
-screenshots were inspected. Browser tooling was installed locally:
-`python -m pip install playwright` (1.63.0); no browser package was added to the
-repository or paid provider called. Browser tests use installed Edge.
+| Command                                                                                                 | Outcome                                                      |
+| ------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------ |
+| `pnpm.cmd --dir frontend install --frozen-lockfile`                                                     | Passed                                                       |
+| `pnpm.cmd --dir frontend lint`                                                                          | Passed Prettier and strict app/domain/test TypeScript checks |
+| `pnpm.cmd --dir frontend test`                                                                          | 11 passed, including 9 API boundary tests                    |
+| `pnpm.cmd --dir frontend build`                                                                         | Production build passed                                      |
+| `python -m uv run --frozen --offline ruff check backend tests frontend/tests/shell_browser.py`          | Passed                                                       |
+| `python -m uv run --frozen --offline ruff format --check backend tests frontend/tests/shell_browser.py` | Passed                                                       |
+| `python -m uv run --frozen --offline mypy`                                                              | Passed, 14 source files                                      |
+| `python -m uv run --frozen --offline pytest -q`                                                         | 345 passed                                                   |
+| `python -m uv run --frozen --offline python scripts/export_openapi.py --check`                          | Passed; generated contracts unchanged                        |
+| `pnpm.cmd --dir frontend audit --audit-level high`                                                      | Passed; one low-severity esbuild finding remains             |
+| `pnpm.cmd --dir frontend dev --port 5173 --strictPort`                                                  | Real repository server started                               |
+| `python frontend/tests/shell_browser.py http://127.0.0.1:5173`                                          | Passed in installed Edge against the real repository         |
 
-## Pending wiring handoff and completion gate
+Browser checks cover keyboard skip, route focus/current links/history, error and
+retry rendering, browser abort without a server mutation, unknown/empty/partial/
+stale states, escaped HTML injection text, and desktop/mobile horizontal overflow.
+Desktop 1440px and mobile 390px screenshots were inspected. Browser tooling is
+locally installed Playwright 1.63.0 with Edge; no browser package was added to the
+repository. Vite reports ignored library `use client` directives while bundling;
+the production build succeeds. No synthetic transport or fixture identifier was
+found in the production bundle.
 
-Repository `pnpm dev/build` cannot yet start this shell: the explicit MS-004 write
-scope omits `frontend/index.html`, `frontend/package.json` and
-`frontend/pnpm-lock.yaml`. A scope handoff was requested before those changes;
-no answer has been received. The completion gate remains unverified in the actual
-repository until that wiring is approved, installed, locked and checked.
+GNU Make is unavailable here; its available lint/type/unit/contract commands were
+executed directly. The repository scripts now include the new source and API
+checks; Node 22 uses the explicit `--experimental-strip-types` flag for API tests.
 
-Concrete proposed changes:
+## Boundaries and review
 
-- Add the root HTML entry with `lang="en"`, viewport metadata, `#root`, and
-  `/src/app/main.tsx` as its module entry.
-- Add exact runtime dependencies `react-router@8.4.0` and
-  `@tanstack/react-query@5.104.1`, regenerate the pnpm lock, and install frozen.
-- Point `dev` and `build` at `--config src/app/vite.config.ts`; include the app,
-  typed mock and state fixture in strict typechecks; add `api.test.mjs` to unit
-  checks; include scoped source in Prettier checks.
+The MS-004 implementation gates pass in the actual repository. There is no pending
+wiring approval. Authentication, consent persistence and feature data APIs belong
+to their later tasks; their route shells honestly report absence until those
+owners deliver them. No production success placeholders replace missing services.
 
-`npm audit --json` in the isolated copy found the existing Vite 7.3.1 high-severity
-development-server advisories and a low-severity esbuild advisory. It recommends
-Vite 7.3.6. No automatic upgrade or unrelated dependency change was made; the
-foundation owner should review this patch upgrade alongside the wiring handoff.
-
-No migration, public API, DTO, enum or production feature-flag change. Existing
-downstream account and capabilities APIs are not supplied by this unit; production
-shows unavailable/error states when those services are absent.
-
-M6 reviewer focus: keyboard/history focus behavior, state labels, request abort
-versus durable cancellation, safe error/model rendering, and separation of
-eligibility from availability/fit/readiness. M6 review has not been performed.
-
-GNU Make is unavailable in this environment; the available Makefile gate commands
-were executed directly as listed above. The new browser helper also passed Ruff
-lint/format checks. Existing repository scripts do not yet include all new source
-checks; that change belongs to the pending wiring handoff. The proposed API-test
-command should use `node --experimental-strip-types --test` for Node 22.12 support.
+M6 review has not been performed. Reviewer focus: keyboard/history focus,
+state-label distinctions, browser abort versus durable cancellation, safe error
+and model rendering, and separation of eligibility from availability/fit/readiness.
