@@ -87,11 +87,14 @@ artifacts and separate child pytest temp roots to preserve parent test files.
 
 ## Remaining verification and reviewer focus
 
-The Linux network namespace cannot be executed on this Windows host. Docker's
-Linux engine is inactive. Local tests and workflow validation passed; the actual
-hosted CI run remains a separate completion gate until GitHub executes it. Do not
-infer a hosted success from local checks or a pushed workflow. M4 review has not
-been performed.
+Local tests and workflow validation passed. GitHub's Ubuntu runner also executed
+the complete network-isolated gate successfully at `314b22b`:
+[hosted CI evidence](https://github.com/Seif-Elkerdany/Seekstride/actions/runs/37232410539).
+This verifies Linux isolation, dropped privileges, lint, types, both Python suites,
+frontend tests, contract comparison and the production bundle on a fresh checkout.
+The harness initializes missing pytest cache parents, including child test roots;
+CI preserves the invoking runner's home when dropping root privileges so uv uses
+its existing cache. M4 review has not been performed.
 
 M4 focus: network isolation and privilege dropping, paid-suite authorization,
 test-selection denominators, fresh protocol-compliant adapters, read-only
