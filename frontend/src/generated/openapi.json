@@ -1,0 +1,6545 @@
+{
+  "components": {
+    "schemas": {
+      "AcceptCandidate": {
+        "additionalProperties": false,
+        "properties": {
+          "action": {
+            "const": "ACCEPT",
+            "title": "Action",
+            "type": "string"
+          },
+          "candidate_id": {
+            "format": "uuid",
+            "title": "Candidate Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "candidate_id",
+          "action"
+        ],
+        "title": "AcceptCandidate",
+        "type": "object"
+      },
+      "AcceptDraft": {
+        "additionalProperties": false,
+        "properties": {
+          "base_application_revision": {
+            "minimum": 1,
+            "title": "Base Application Revision",
+            "type": "integer"
+          },
+          "confirmed_review": {
+            "const": true,
+            "title": "Confirmed Review",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "base_application_revision",
+          "confirmed_review"
+        ],
+        "title": "AcceptDraft",
+        "type": "object"
+      },
+      "Account": {
+        "additionalProperties": false,
+        "properties": {
+          "consent": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Consent"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "created_at": {
+            "format": "date-time",
+            "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}(\\.[0-9]{1,6})?Z$",
+            "title": "Created At",
+            "type": "string"
+          },
+          "display_name": {
+            "maxLength": 80,
+            "minLength": 1,
+            "title": "Display Name",
+            "type": "string"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "is_demo": {
+            "title": "Is Demo",
+            "type": "boolean"
+          },
+          "status": {
+            "$ref": "#/components/schemas/AccountStatus"
+          },
+          "timezone": {
+            "minLength": 1,
+            "title": "Timezone",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "display_name",
+          "timezone",
+          "status",
+          "consent",
+          "is_demo",
+          "created_at"
+        ],
+        "title": "Account",
+        "type": "object"
+      },
+      "AccountStatus": {
+        "enum": [
+          "ACTIVE",
+          "DELETING"
+        ],
+        "title": "AccountStatus",
+        "type": "string"
+      },
+      "AllNode": {
+        "additionalProperties": false,
+        "properties": {
+          "children": {
+            "items": {
+              "minLength": 1,
+              "type": "string"
+            },
+            "maxItems": 50,
+            "minItems": 1,
+            "title": "Children",
+            "type": "array"
+          },
+          "id": {
+            "minLength": 1,
+            "title": "Id",
+            "type": "string"
+          },
+          "type": {
+            "const": "ALL",
+            "title": "Type",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "type",
+          "children"
+        ],
+        "title": "AllNode",
+        "type": "object"
+      },
+      "AnswerClarifications": {
+        "additionalProperties": false,
+        "properties": {
+          "answers": {
+            "items": {
+              "$ref": "#/components/schemas/ClarificationAnswer"
+            },
+            "maxItems": 3,
+            "title": "Answers",
+            "type": "array"
+          },
+          "base_profile_version_id": {
+            "format": "uuid",
+            "title": "Base Profile Version Id",
+            "type": "string"
+          },
+          "revision": {
+            "minimum": 1,
+            "title": "Revision",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "revision",
+          "base_profile_version_id",
+          "answers"
+        ],
+        "title": "AnswerClarifications",
+        "type": "object"
+      },
+      "AnyNode": {
+        "additionalProperties": false,
+        "properties": {
+          "children": {
+            "items": {
+              "minLength": 1,
+              "type": "string"
+            },
+            "maxItems": 50,
+            "minItems": 1,
+            "title": "Children",
+            "type": "array"
+          },
+          "id": {
+            "minLength": 1,
+            "title": "Id",
+            "type": "string"
+          },
+          "type": {
+            "const": "ANY",
+            "title": "Type",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "type",
+          "children"
+        ],
+        "title": "AnyNode",
+        "type": "object"
+      },
+      "Applicability": {
+        "enum": [
+          "APPLIES",
+          "DOES_NOT_APPLY",
+          "UNKNOWN"
+        ],
+        "title": "Applicability",
+        "type": "string"
+      },
+      "Application": {
+        "additionalProperties": false,
+        "properties": {
+          "accepted_draft_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Accepted Draft Id"
+          },
+          "created_at": {
+            "format": "date-time",
+            "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}(\\.[0-9]{1,6})?Z$",
+            "title": "Created At",
+            "type": "string"
+          },
+          "evaluation_id": {
+            "format": "uuid",
+            "title": "Evaluation Id",
+            "type": "string"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/ChecklistItem"
+            },
+            "title": "Items",
+            "type": "array"
+          },
+          "latest_draft_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Latest Draft Id"
+          },
+          "opportunity_id": {
+            "format": "uuid",
+            "title": "Opportunity Id",
+            "type": "string"
+          },
+          "opportunity_version_id": {
+            "format": "uuid",
+            "title": "Opportunity Version Id",
+            "type": "string"
+          },
+          "profile_version_id": {
+            "format": "uuid",
+            "title": "Profile Version Id",
+            "type": "string"
+          },
+          "readiness": {
+            "$ref": "#/components/schemas/Readiness"
+          },
+          "revision": {
+            "minimum": 1,
+            "title": "Revision",
+            "type": "integer"
+          },
+          "state": {
+            "$ref": "#/components/schemas/ApplicationState"
+          }
+        },
+        "required": [
+          "id",
+          "opportunity_id",
+          "opportunity_version_id",
+          "profile_version_id",
+          "evaluation_id",
+          "revision",
+          "state",
+          "items",
+          "readiness",
+          "latest_draft_id",
+          "accepted_draft_id",
+          "created_at"
+        ],
+        "title": "Application",
+        "type": "object"
+      },
+      "ApplicationState": {
+        "enum": [
+          "CURRENT",
+          "STALE"
+        ],
+        "title": "ApplicationState",
+        "type": "string"
+      },
+      "ApplicationTask": {
+        "additionalProperties": false,
+        "properties": {
+          "applicability": {
+            "$ref": "#/components/schemas/Applicability"
+          },
+          "key": {
+            "minLength": 1,
+            "title": "Key",
+            "type": "string"
+          },
+          "kind": {
+            "$ref": "#/components/schemas/TaskKind"
+          },
+          "label": {
+            "minLength": 1,
+            "title": "Label",
+            "type": "string"
+          },
+          "required": {
+            "title": "Required",
+            "type": "boolean"
+          },
+          "source_span_ids": {
+            "items": {
+              "format": "uuid",
+              "type": "string"
+            },
+            "minLength": 1,
+            "title": "Source Span Ids",
+            "type": "array",
+            "uniqueItems": true
+          }
+        },
+        "required": [
+          "key",
+          "label",
+          "required",
+          "kind",
+          "applicability",
+          "source_span_ids"
+        ],
+        "title": "ApplicationTask",
+        "type": "object"
+      },
+      "ArtifactRef": {
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "type": {
+            "$ref": "#/components/schemas/ArtifactType"
+          }
+        },
+        "required": [
+          "type",
+          "id"
+        ],
+        "title": "ArtifactRef",
+        "type": "object"
+      },
+      "ArtifactType": {
+        "enum": [
+          "opportunity",
+          "evaluation",
+          "draft"
+        ],
+        "title": "ArtifactType",
+        "type": "string"
+      },
+      "Authority": {
+        "enum": [
+          "OFFICIAL",
+          "CORROBORATED",
+          "DISCOVERY_ONLY",
+          "UNRESOLVED"
+        ],
+        "title": "Authority",
+        "type": "string"
+      },
+      "Availability": {
+        "enum": [
+          "OPEN",
+          "CLOSED",
+          "NOT_YET_OPEN",
+          "UNKNOWN",
+          "UNAVAILABLE"
+        ],
+        "title": "Availability",
+        "type": "string"
+      },
+      "BooleanValue": {
+        "additionalProperties": false,
+        "properties": {
+          "type": {
+            "const": "BOOLEAN",
+            "title": "Type",
+            "type": "string"
+          },
+          "value": {
+            "title": "Value",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "type",
+          "value"
+        ],
+        "title": "BooleanValue",
+        "type": "object"
+      },
+      "CandidateDecision": {
+        "discriminator": {
+          "mapping": {
+            "ACCEPT": "#/components/schemas/AcceptCandidate",
+            "CORRECT": "#/components/schemas/CorrectCandidate",
+            "REJECT": "#/components/schemas/RejectCandidate"
+          },
+          "propertyName": "action"
+        },
+        "oneOf": [
+          {
+            "$ref": "#/components/schemas/AcceptCandidate"
+          },
+          {
+            "$ref": "#/components/schemas/RejectCandidate"
+          },
+          {
+            "$ref": "#/components/schemas/CorrectCandidate"
+          }
+        ]
+      },
+      "CandidateState": {
+        "enum": [
+          "PENDING",
+          "ACCEPTED",
+          "CORRECTED",
+          "REJECTED"
+        ],
+        "title": "CandidateState",
+        "type": "string"
+      },
+      "Capabilities": {
+        "additionalProperties": false,
+        "properties": {
+          "api_version": {
+            "const": "1",
+            "title": "Api Version",
+            "type": "string"
+          },
+          "deep_available": {
+            "title": "Deep Available",
+            "type": "boolean"
+          },
+          "demo_reset": {
+            "title": "Demo Reset",
+            "type": "boolean"
+          },
+          "inference_available": {
+            "title": "Inference Available",
+            "type": "boolean"
+          },
+          "max_document_bytes": {
+            "minimum": 1,
+            "title": "Max Document Bytes",
+            "type": "integer"
+          },
+          "max_document_pages": {
+            "minimum": 1,
+            "title": "Max Document Pages",
+            "type": "integer"
+          },
+          "supported_document_types": {
+            "items": {
+              "const": "application/pdf",
+              "type": "string"
+            },
+            "title": "Supported Document Types",
+            "type": "array"
+          },
+          "supported_lanes": {
+            "items": {
+              "$ref": "#/components/schemas/Lane"
+            },
+            "title": "Supported Lanes",
+            "type": "array"
+          },
+          "watch": {
+            "title": "Watch",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "api_version",
+          "watch",
+          "demo_reset",
+          "supported_lanes",
+          "supported_document_types",
+          "max_document_bytes",
+          "max_document_pages",
+          "inference_available",
+          "deep_available"
+        ],
+        "title": "Capabilities",
+        "type": "object"
+      },
+      "ChecklistItem": {
+        "additionalProperties": false,
+        "properties": {
+          "applicability": {
+            "$ref": "#/components/schemas/Applicability"
+          },
+          "draft_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Draft Id"
+          },
+          "evidence_ids": {
+            "items": {
+              "format": "uuid",
+              "type": "string"
+            },
+            "title": "Evidence Ids",
+            "type": "array",
+            "uniqueItems": true
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "key": {
+            "minLength": 1,
+            "title": "Key",
+            "type": "string"
+          },
+          "kind": {
+            "$ref": "#/components/schemas/TaskKind"
+          },
+          "label": {
+            "minLength": 1,
+            "title": "Label",
+            "type": "string"
+          },
+          "required": {
+            "title": "Required",
+            "type": "boolean"
+          },
+          "status": {
+            "$ref": "#/components/schemas/ChecklistStatus"
+          }
+        },
+        "required": [
+          "id",
+          "key",
+          "label",
+          "kind",
+          "required",
+          "applicability",
+          "status",
+          "evidence_ids",
+          "draft_id"
+        ],
+        "title": "ChecklistItem",
+        "type": "object"
+      },
+      "ChecklistStatus": {
+        "enum": [
+          "TODO",
+          "DONE"
+        ],
+        "title": "ChecklistStatus",
+        "type": "string"
+      },
+      "ClaimStatus": {
+        "enum": [
+          "SUPPORTED",
+          "CONTRADICTED",
+          "UNVERIFIABLE"
+        ],
+        "title": "ClaimStatus",
+        "type": "string"
+      },
+      "ClarificationAnswer": {
+        "additionalProperties": false,
+        "properties": {
+          "question_id": {
+            "minLength": 1,
+            "title": "Question Id",
+            "type": "string"
+          },
+          "skip": {
+            "title": "Skip",
+            "type": "boolean"
+          },
+          "value": {
+            "anyOf": [
+              {
+                "discriminator": {
+                  "mapping": {
+                    "BOOLEAN": "#/components/schemas/BooleanValue",
+                    "COUNTRY_SET": "#/components/schemas/CountrySetValue",
+                    "DATE": "#/components/schemas/DateValue",
+                    "EXPERIENCE": "#/components/schemas/ExperienceValue",
+                    "GPA": "#/components/schemas/GpaValue",
+                    "LANGUAGE_TESTS": "#/components/schemas/LanguageTestsValue",
+                    "STRING": "#/components/schemas/StringValue",
+                    "STRING_SET": "#/components/schemas/StringSetValue",
+                    "UNKNOWN": "#/components/schemas/UnknownValue"
+                  },
+                  "propertyName": "type"
+                },
+                "oneOf": [
+                  {
+                    "$ref": "#/components/schemas/StringValue"
+                  },
+                  {
+                    "$ref": "#/components/schemas/BooleanValue"
+                  },
+                  {
+                    "$ref": "#/components/schemas/CountrySetValue"
+                  },
+                  {
+                    "$ref": "#/components/schemas/StringSetValue"
+                  },
+                  {
+                    "$ref": "#/components/schemas/GpaValue"
+                  },
+                  {
+                    "$ref": "#/components/schemas/DateValue"
+                  },
+                  {
+                    "$ref": "#/components/schemas/ExperienceValue"
+                  },
+                  {
+                    "$ref": "#/components/schemas/LanguageTestsValue"
+                  },
+                  {
+                    "$ref": "#/components/schemas/UnknownValue"
+                  }
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Value"
+          }
+        },
+        "required": [
+          "question_id",
+          "value",
+          "skip"
+        ],
+        "title": "ClarificationAnswer",
+        "type": "object"
+      },
+      "ClarificationQuestion": {
+        "additionalProperties": false,
+        "properties": {
+          "attribute": {
+            "$ref": "#/components/schemas/FactAttribute"
+          },
+          "id": {
+            "minLength": 1,
+            "title": "Id",
+            "type": "string"
+          },
+          "prompt": {
+            "minLength": 1,
+            "title": "Prompt",
+            "type": "string"
+          },
+          "reason": {
+            "minLength": 1,
+            "title": "Reason",
+            "type": "string"
+          },
+          "required_for_nodes": {
+            "items": {
+              "minLength": 1,
+              "type": "string"
+            },
+            "minItems": 1,
+            "title": "Required For Nodes",
+            "type": "array"
+          },
+          "value_type": {
+            "$ref": "#/components/schemas/FactType"
+          }
+        },
+        "required": [
+          "id",
+          "attribute",
+          "prompt",
+          "value_type",
+          "reason",
+          "required_for_nodes"
+        ],
+        "title": "ClarificationQuestion",
+        "type": "object"
+      },
+      "ClarificationSet": {
+        "additionalProperties": false,
+        "properties": {
+          "base_profile_version_id": {
+            "format": "uuid",
+            "title": "Base Profile Version Id",
+            "type": "string"
+          },
+          "expires_at": {
+            "format": "date-time",
+            "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}(\\.[0-9]{1,6})?Z$",
+            "title": "Expires At",
+            "type": "string"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "questions": {
+            "items": {
+              "$ref": "#/components/schemas/ClarificationQuestion"
+            },
+            "maxItems": 3,
+            "title": "Questions",
+            "type": "array"
+          },
+          "revision": {
+            "minimum": 1,
+            "title": "Revision",
+            "type": "integer"
+          },
+          "round": {
+            "maximum": 2,
+            "minimum": 1,
+            "title": "Round",
+            "type": "integer"
+          },
+          "run_id": {
+            "format": "uuid",
+            "title": "Run Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "run_id",
+          "revision",
+          "round",
+          "base_profile_version_id",
+          "questions",
+          "expires_at"
+        ],
+        "title": "ClarificationSet",
+        "type": "object"
+      },
+      "CompleteDocumentUpload": {
+        "additionalProperties": false,
+        "properties": {
+          "sha256": {
+            "pattern": "^[0-9a-f]{64}$",
+            "title": "Sha256",
+            "type": "string"
+          }
+        },
+        "required": [
+          "sha256"
+        ],
+        "title": "CompleteDocumentUpload",
+        "type": "object"
+      },
+      "Completeness": {
+        "enum": [
+          "COMPLETE",
+          "INCOMPLETE",
+          "CONFLICTED"
+        ],
+        "title": "Completeness",
+        "type": "string"
+      },
+      "Consent": {
+        "additionalProperties": false,
+        "properties": {
+          "accepted_at": {
+            "format": "date-time",
+            "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}(\\.[0-9]{1,6})?Z$",
+            "title": "Accepted At",
+            "type": "string"
+          },
+          "version": {
+            "minLength": 1,
+            "title": "Version",
+            "type": "string"
+          }
+        },
+        "required": [
+          "version",
+          "accepted_at"
+        ],
+        "title": "Consent",
+        "type": "object"
+      },
+      "CorrectCandidate": {
+        "additionalProperties": false,
+        "properties": {
+          "action": {
+            "const": "CORRECT",
+            "title": "Action",
+            "type": "string"
+          },
+          "candidate_id": {
+            "format": "uuid",
+            "title": "Candidate Id",
+            "type": "string"
+          },
+          "explanation": {
+            "maxLength": 500,
+            "minLength": 1,
+            "title": "Explanation",
+            "type": "string"
+          },
+          "value": {
+            "discriminator": {
+              "mapping": {
+                "BOOLEAN": "#/components/schemas/BooleanValue",
+                "COUNTRY_SET": "#/components/schemas/CountrySetValue",
+                "DATE": "#/components/schemas/DateValue",
+                "EXPERIENCE": "#/components/schemas/ExperienceValue",
+                "GPA": "#/components/schemas/GpaValue",
+                "LANGUAGE_TESTS": "#/components/schemas/LanguageTestsValue",
+                "STRING": "#/components/schemas/StringValue",
+                "STRING_SET": "#/components/schemas/StringSetValue",
+                "UNKNOWN": "#/components/schemas/UnknownValue"
+              },
+              "propertyName": "type"
+            },
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/StringValue"
+              },
+              {
+                "$ref": "#/components/schemas/BooleanValue"
+              },
+              {
+                "$ref": "#/components/schemas/CountrySetValue"
+              },
+              {
+                "$ref": "#/components/schemas/StringSetValue"
+              },
+              {
+                "$ref": "#/components/schemas/GpaValue"
+              },
+              {
+                "$ref": "#/components/schemas/DateValue"
+              },
+              {
+                "$ref": "#/components/schemas/ExperienceValue"
+              },
+              {
+                "$ref": "#/components/schemas/LanguageTestsValue"
+              },
+              {
+                "$ref": "#/components/schemas/UnknownValue"
+              }
+            ],
+            "title": "Value"
+          }
+        },
+        "required": [
+          "candidate_id",
+          "action",
+          "value",
+          "explanation"
+        ],
+        "title": "CorrectCandidate",
+        "type": "object"
+      },
+      "CountrySetValue": {
+        "additionalProperties": false,
+        "properties": {
+          "type": {
+            "const": "COUNTRY_SET",
+            "title": "Type",
+            "type": "string"
+          },
+          "values": {
+            "items": {
+              "enum": [
+                "AD",
+                "AE",
+                "AF",
+                "AG",
+                "AI",
+                "AL",
+                "AM",
+                "AO",
+                "AQ",
+                "AR",
+                "AS",
+                "AT",
+                "AU",
+                "AW",
+                "AX",
+                "AZ",
+                "BA",
+                "BB",
+                "BD",
+                "BE",
+                "BF",
+                "BG",
+                "BH",
+                "BI",
+                "BJ",
+                "BL",
+                "BM",
+                "BN",
+                "BO",
+                "BQ",
+                "BR",
+                "BS",
+                "BT",
+                "BV",
+                "BW",
+                "BY",
+                "BZ",
+                "CA",
+                "CC",
+                "CD",
+                "CF",
+                "CG",
+                "CH",
+                "CI",
+                "CK",
+                "CL",
+                "CM",
+                "CN",
+                "CO",
+                "CR",
+                "CU",
+                "CV",
+                "CW",
+                "CX",
+                "CY",
+                "CZ",
+                "DE",
+                "DJ",
+                "DK",
+                "DM",
+                "DO",
+                "DZ",
+                "EC",
+                "EE",
+                "EG",
+                "EH",
+                "ER",
+                "ES",
+                "ET",
+                "FI",
+                "FJ",
+                "FK",
+                "FM",
+                "FO",
+                "FR",
+                "GA",
+                "GB",
+                "GD",
+                "GE",
+                "GF",
+                "GG",
+                "GH",
+                "GI",
+                "GL",
+                "GM",
+                "GN",
+                "GP",
+                "GQ",
+                "GR",
+                "GS",
+                "GT",
+                "GU",
+                "GW",
+                "GY",
+                "HK",
+                "HM",
+                "HN",
+                "HR",
+                "HT",
+                "HU",
+                "ID",
+                "IE",
+                "IL",
+                "IM",
+                "IN",
+                "IO",
+                "IQ",
+                "IR",
+                "IS",
+                "IT",
+                "JE",
+                "JM",
+                "JO",
+                "JP",
+                "KE",
+                "KG",
+                "KH",
+                "KI",
+                "KM",
+                "KN",
+                "KP",
+                "KR",
+                "KW",
+                "KY",
+                "KZ",
+                "LA",
+                "LB",
+                "LC",
+                "LI",
+                "LK",
+                "LR",
+                "LS",
+                "LT",
+                "LU",
+                "LV",
+                "LY",
+                "MA",
+                "MC",
+                "MD",
+                "ME",
+                "MF",
+                "MG",
+                "MH",
+                "MK",
+                "ML",
+                "MM",
+                "MN",
+                "MO",
+                "MP",
+                "MQ",
+                "MR",
+                "MS",
+                "MT",
+                "MU",
+                "MV",
+                "MW",
+                "MX",
+                "MY",
+                "MZ",
+                "NA",
+                "NC",
+                "NE",
+                "NF",
+                "NG",
+                "NI",
+                "NL",
+                "NO",
+                "NP",
+                "NR",
+                "NU",
+                "NZ",
+                "OM",
+                "PA",
+                "PE",
+                "PF",
+                "PG",
+                "PH",
+                "PK",
+                "PL",
+                "PM",
+                "PN",
+                "PR",
+                "PS",
+                "PT",
+                "PW",
+                "PY",
+                "QA",
+                "RE",
+                "RO",
+                "RS",
+                "RU",
+                "RW",
+                "SA",
+                "SB",
+                "SC",
+                "SD",
+                "SE",
+                "SG",
+                "SH",
+                "SI",
+                "SJ",
+                "SK",
+                "SL",
+                "SM",
+                "SN",
+                "SO",
+                "SR",
+                "SS",
+                "ST",
+                "SV",
+                "SX",
+                "SY",
+                "SZ",
+                "TC",
+                "TD",
+                "TF",
+                "TG",
+                "TH",
+                "TJ",
+                "TK",
+                "TL",
+                "TM",
+                "TN",
+                "TO",
+                "TR",
+                "TT",
+                "TV",
+                "TW",
+                "TZ",
+                "UA",
+                "UG",
+                "UM",
+                "US",
+                "UY",
+                "UZ",
+                "VA",
+                "VC",
+                "VE",
+                "VG",
+                "VI",
+                "VN",
+                "VU",
+                "WF",
+                "WS",
+                "YE",
+                "YT",
+                "ZA",
+                "ZM",
+                "ZW"
+              ],
+              "type": "string"
+            },
+            "maxItems": 20,
+            "title": "Values",
+            "type": "array",
+            "uniqueItems": true
+          }
+        },
+        "required": [
+          "type",
+          "values"
+        ],
+        "title": "CountrySetValue",
+        "type": "object"
+      },
+      "CreateApplication": {
+        "additionalProperties": false,
+        "properties": {
+          "evaluation_id": {
+            "format": "uuid",
+            "title": "Evaluation Id",
+            "type": "string"
+          },
+          "replace_stale": {
+            "title": "Replace Stale",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "evaluation_id",
+          "replace_stale"
+        ],
+        "title": "CreateApplication",
+        "type": "object"
+      },
+      "CreateDocumentUpload": {
+        "additionalProperties": false,
+        "properties": {
+          "content_type": {
+            "const": "application/pdf",
+            "title": "Content Type",
+            "type": "string"
+          },
+          "filename": {
+            "maxLength": 120,
+            "minLength": 1,
+            "title": "Filename",
+            "type": "string"
+          },
+          "kind": {
+            "$ref": "#/components/schemas/DocumentKind"
+          },
+          "sha256": {
+            "pattern": "^[0-9a-f]{64}$",
+            "title": "Sha256",
+            "type": "string"
+          },
+          "size_bytes": {
+            "maximum": 10485760,
+            "minimum": 1,
+            "title": "Size Bytes",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "filename",
+          "kind",
+          "content_type",
+          "size_bytes",
+          "sha256"
+        ],
+        "title": "CreateDocumentUpload",
+        "type": "object"
+      },
+      "CreateWatch": {
+        "additionalProperties": false,
+        "properties": {
+          "interval_hours": {
+            "enum": [
+              24,
+              72
+            ],
+            "title": "Interval Hours",
+            "type": "integer"
+          },
+          "opportunity_id": {
+            "format": "uuid",
+            "title": "Opportunity Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "opportunity_id",
+          "interval_hours"
+        ],
+        "title": "CreateWatch",
+        "type": "object"
+      },
+      "Currentness": {
+        "enum": [
+          "CURRENT",
+          "STALE",
+          "HISTORICAL"
+        ],
+        "title": "Currentness",
+        "type": "string"
+      },
+      "DatePrecision": {
+        "enum": [
+          "DAY",
+          "MONTH",
+          "YEAR"
+        ],
+        "title": "DatePrecision",
+        "type": "string"
+      },
+      "DateValue": {
+        "additionalProperties": false,
+        "properties": {
+          "expected": {
+            "title": "Expected",
+            "type": "boolean"
+          },
+          "precision": {
+            "$ref": "#/components/schemas/DatePrecision"
+          },
+          "type": {
+            "const": "DATE",
+            "title": "Type",
+            "type": "string"
+          },
+          "value": {
+            "title": "Value",
+            "type": "string"
+          }
+        },
+        "required": [
+          "type",
+          "value",
+          "precision",
+          "expected"
+        ],
+        "title": "DateValue",
+        "type": "object"
+      },
+      "Deadline": {
+        "additionalProperties": false,
+        "properties": {
+          "ambiguity": {
+            "anyOf": [
+              {
+                "minLength": 1,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Ambiguity"
+          },
+          "at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}(\\.[0-9]{1,6})?Z$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "At"
+          },
+          "date": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Date"
+          },
+          "precision": {
+            "$ref": "#/components/schemas/DeadlinePrecision"
+          },
+          "raw_text": {
+            "title": "Raw Text",
+            "type": "string"
+          },
+          "timezone": {
+            "anyOf": [
+              {
+                "minLength": 1,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Timezone"
+          }
+        },
+        "required": [
+          "raw_text",
+          "precision",
+          "date",
+          "at",
+          "timezone",
+          "ambiguity"
+        ],
+        "title": "Deadline",
+        "type": "object"
+      },
+      "DeadlinePrecision": {
+        "enum": [
+          "INSTANT",
+          "DATE",
+          "MONTH",
+          "YEAR",
+          "UNKNOWN"
+        ],
+        "title": "DeadlinePrecision",
+        "type": "string"
+      },
+      "DeleteAccount": {
+        "additionalProperties": false,
+        "properties": {
+          "confirmation": {
+            "const": "DELETE",
+            "title": "Confirmation",
+            "type": "string"
+          }
+        },
+        "required": [
+          "confirmation"
+        ],
+        "title": "DeleteAccount",
+        "type": "object"
+      },
+      "DeletionAccepted": {
+        "additionalProperties": false,
+        "properties": {
+          "expires_at": {
+            "format": "date-time",
+            "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}(\\.[0-9]{1,6})?Z$",
+            "title": "Expires At",
+            "type": "string"
+          },
+          "receipt_id": {
+            "format": "uuid",
+            "title": "Receipt Id",
+            "type": "string"
+          },
+          "receipt_token": {
+            "minLength": 1,
+            "title": "Receipt Token",
+            "type": "string"
+          },
+          "receipt_url": {
+            "minLength": 1,
+            "title": "Receipt Url",
+            "type": "string"
+          },
+          "status": {
+            "const": "PENDING",
+            "title": "Status",
+            "type": "string"
+          }
+        },
+        "required": [
+          "receipt_id",
+          "receipt_token",
+          "receipt_url",
+          "status",
+          "expires_at"
+        ],
+        "title": "DeletionAccepted",
+        "type": "object"
+      },
+      "DeletionReceipt": {
+        "additionalProperties": false,
+        "properties": {
+          "active_store_deleted_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}(\\.[0-9]{1,6})?Z$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Active Store Deleted At"
+          },
+          "backup_retention_until": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}(\\.[0-9]{1,6})?Z$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Backup Retention Until"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "requested_at": {
+            "format": "date-time",
+            "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}(\\.[0-9]{1,6})?Z$",
+            "title": "Requested At",
+            "type": "string"
+          },
+          "status": {
+            "$ref": "#/components/schemas/DeletionStatus"
+          }
+        },
+        "required": [
+          "id",
+          "status",
+          "requested_at",
+          "active_store_deleted_at",
+          "backup_retention_until"
+        ],
+        "title": "DeletionReceipt",
+        "type": "object"
+      },
+      "DeletionStatus": {
+        "enum": [
+          "PENDING",
+          "COMPLETE",
+          "FAILED"
+        ],
+        "title": "DeletionStatus",
+        "type": "string"
+      },
+      "DemoScenario": {
+        "enum": [
+          "MET_READY",
+          "GPA_NOT_MET",
+          "UNKNOWN_AUTHORIZATION"
+        ],
+        "title": "DemoScenario",
+        "type": "string"
+      },
+      "DiscoveryPreferences": {
+        "additionalProperties": false,
+        "properties": {
+          "countries": {
+            "items": {
+              "enum": [
+                "AD",
+                "AE",
+                "AF",
+                "AG",
+                "AI",
+                "AL",
+                "AM",
+                "AO",
+                "AQ",
+                "AR",
+                "AS",
+                "AT",
+                "AU",
+                "AW",
+                "AX",
+                "AZ",
+                "BA",
+                "BB",
+                "BD",
+                "BE",
+                "BF",
+                "BG",
+                "BH",
+                "BI",
+                "BJ",
+                "BL",
+                "BM",
+                "BN",
+                "BO",
+                "BQ",
+                "BR",
+                "BS",
+                "BT",
+                "BV",
+                "BW",
+                "BY",
+                "BZ",
+                "CA",
+                "CC",
+                "CD",
+                "CF",
+                "CG",
+                "CH",
+                "CI",
+                "CK",
+                "CL",
+                "CM",
+                "CN",
+                "CO",
+                "CR",
+                "CU",
+                "CV",
+                "CW",
+                "CX",
+                "CY",
+                "CZ",
+                "DE",
+                "DJ",
+                "DK",
+                "DM",
+                "DO",
+                "DZ",
+                "EC",
+                "EE",
+                "EG",
+                "EH",
+                "ER",
+                "ES",
+                "ET",
+                "FI",
+                "FJ",
+                "FK",
+                "FM",
+                "FO",
+                "FR",
+                "GA",
+                "GB",
+                "GD",
+                "GE",
+                "GF",
+                "GG",
+                "GH",
+                "GI",
+                "GL",
+                "GM",
+                "GN",
+                "GP",
+                "GQ",
+                "GR",
+                "GS",
+                "GT",
+                "GU",
+                "GW",
+                "GY",
+                "HK",
+                "HM",
+                "HN",
+                "HR",
+                "HT",
+                "HU",
+                "ID",
+                "IE",
+                "IL",
+                "IM",
+                "IN",
+                "IO",
+                "IQ",
+                "IR",
+                "IS",
+                "IT",
+                "JE",
+                "JM",
+                "JO",
+                "JP",
+                "KE",
+                "KG",
+                "KH",
+                "KI",
+                "KM",
+                "KN",
+                "KP",
+                "KR",
+                "KW",
+                "KY",
+                "KZ",
+                "LA",
+                "LB",
+                "LC",
+                "LI",
+                "LK",
+                "LR",
+                "LS",
+                "LT",
+                "LU",
+                "LV",
+                "LY",
+                "MA",
+                "MC",
+                "MD",
+                "ME",
+                "MF",
+                "MG",
+                "MH",
+                "MK",
+                "ML",
+                "MM",
+                "MN",
+                "MO",
+                "MP",
+                "MQ",
+                "MR",
+                "MS",
+                "MT",
+                "MU",
+                "MV",
+                "MW",
+                "MX",
+                "MY",
+                "MZ",
+                "NA",
+                "NC",
+                "NE",
+                "NF",
+                "NG",
+                "NI",
+                "NL",
+                "NO",
+                "NP",
+                "NR",
+                "NU",
+                "NZ",
+                "OM",
+                "PA",
+                "PE",
+                "PF",
+                "PG",
+                "PH",
+                "PK",
+                "PL",
+                "PM",
+                "PN",
+                "PR",
+                "PS",
+                "PT",
+                "PW",
+                "PY",
+                "QA",
+                "RE",
+                "RO",
+                "RS",
+                "RU",
+                "RW",
+                "SA",
+                "SB",
+                "SC",
+                "SD",
+                "SE",
+                "SG",
+                "SH",
+                "SI",
+                "SJ",
+                "SK",
+                "SL",
+                "SM",
+                "SN",
+                "SO",
+                "SR",
+                "SS",
+                "ST",
+                "SV",
+                "SX",
+                "SY",
+                "SZ",
+                "TC",
+                "TD",
+                "TF",
+                "TG",
+                "TH",
+                "TJ",
+                "TK",
+                "TL",
+                "TM",
+                "TN",
+                "TO",
+                "TR",
+                "TT",
+                "TV",
+                "TW",
+                "TZ",
+                "UA",
+                "UG",
+                "UM",
+                "US",
+                "UY",
+                "UZ",
+                "VA",
+                "VC",
+                "VE",
+                "VG",
+                "VI",
+                "VN",
+                "VU",
+                "WF",
+                "WS",
+                "YE",
+                "YT",
+                "ZA",
+                "ZM",
+                "ZW"
+              ],
+              "type": "string"
+            },
+            "maxItems": 10,
+            "title": "Countries",
+            "type": "array"
+          },
+          "fields": {
+            "items": {
+              "maxLength": 80,
+              "minLength": 1,
+              "type": "string"
+            },
+            "maxItems": 10,
+            "title": "Fields",
+            "type": "array"
+          },
+          "funding_required": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Funding Required"
+          },
+          "remote": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Remote"
+          }
+        },
+        "required": [
+          "countries",
+          "remote",
+          "fields",
+          "funding_required"
+        ],
+        "title": "DiscoveryPreferences",
+        "type": "object"
+      },
+      "Document": {
+        "additionalProperties": false,
+        "properties": {
+          "created_at": {
+            "format": "date-time",
+            "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}(\\.[0-9]{1,6})?Z$",
+            "title": "Created At",
+            "type": "string"
+          },
+          "deleted_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}(\\.[0-9]{1,6})?Z$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Deleted At"
+          },
+          "failure_code": {
+            "anyOf": [
+              {
+                "minLength": 1,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Failure Code"
+          },
+          "filename": {
+            "maxLength": 120,
+            "minLength": 1,
+            "title": "Filename",
+            "type": "string"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "kind": {
+            "$ref": "#/components/schemas/DocumentKind"
+          },
+          "page_count": {
+            "anyOf": [
+              {
+                "minimum": 1,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Page Count"
+          },
+          "quality": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/DocumentQuality"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "sha256": {
+            "pattern": "^[0-9a-f]{64}$",
+            "title": "Sha256",
+            "type": "string"
+          },
+          "size_bytes": {
+            "minimum": 0,
+            "title": "Size Bytes",
+            "type": "integer"
+          },
+          "status": {
+            "$ref": "#/components/schemas/DocumentStatus"
+          },
+          "version_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Version Id"
+          }
+        },
+        "required": [
+          "id",
+          "filename",
+          "kind",
+          "status",
+          "size_bytes",
+          "sha256",
+          "version_id",
+          "page_count",
+          "quality",
+          "failure_code",
+          "created_at",
+          "deleted_at"
+        ],
+        "title": "Document",
+        "type": "object"
+      },
+      "DocumentDownload": {
+        "additionalProperties": false,
+        "properties": {
+          "expires_at": {
+            "format": "date-time",
+            "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}(\\.[0-9]{1,6})?Z$",
+            "title": "Expires At",
+            "type": "string"
+          },
+          "url": {
+            "minLength": 1,
+            "title": "Url",
+            "type": "string"
+          }
+        },
+        "required": [
+          "url",
+          "expires_at"
+        ],
+        "title": "DocumentDownload",
+        "type": "object"
+      },
+      "DocumentKind": {
+        "enum": [
+          "CV",
+          "TRANSCRIPT",
+          "ENROLLMENT"
+        ],
+        "title": "DocumentKind",
+        "type": "string"
+      },
+      "DocumentQuality": {
+        "enum": [
+          "READABLE",
+          "MANUAL_ENTRY_REQUIRED"
+        ],
+        "title": "DocumentQuality",
+        "type": "string"
+      },
+      "DocumentStatus": {
+        "enum": [
+          "UPLOADING",
+          "UPLOADED",
+          "QUEUED",
+          "PARSING",
+          "READY",
+          "FAILED",
+          "DELETING"
+        ],
+        "title": "DocumentStatus",
+        "type": "string"
+      },
+      "Draft": {
+        "additionalProperties": false,
+        "properties": {
+          "accepted_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}(\\.[0-9]{1,6})?Z$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Accepted At"
+          },
+          "application_id": {
+            "format": "uuid",
+            "title": "Application Id",
+            "type": "string"
+          },
+          "claims": {
+            "items": {
+              "$ref": "#/components/schemas/DraftClaim"
+            },
+            "title": "Claims",
+            "type": "array"
+          },
+          "created_at": {
+            "format": "date-time",
+            "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}(\\.[0-9]{1,6})?Z$",
+            "title": "Created At",
+            "type": "string"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "issues": {
+            "items": {
+              "minLength": 1,
+              "type": "string"
+            },
+            "title": "Issues",
+            "type": "array"
+          },
+          "opportunity_version_id": {
+            "format": "uuid",
+            "title": "Opportunity Version Id",
+            "type": "string"
+          },
+          "profile_version_id": {
+            "format": "uuid",
+            "title": "Profile Version Id",
+            "type": "string"
+          },
+          "text": {
+            "maxLength": 8000,
+            "title": "Text",
+            "type": "string"
+          },
+          "validation": {
+            "$ref": "#/components/schemas/DraftValidation"
+          },
+          "version_number": {
+            "minimum": 1,
+            "title": "Version Number",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "id",
+          "application_id",
+          "version_number",
+          "profile_version_id",
+          "opportunity_version_id",
+          "text",
+          "validation",
+          "claims",
+          "issues",
+          "accepted_at",
+          "created_at"
+        ],
+        "title": "Draft",
+        "type": "object"
+      },
+      "DraftClaim": {
+        "additionalProperties": false,
+        "properties": {
+          "end": {
+            "minimum": 0,
+            "title": "End",
+            "type": "integer"
+          },
+          "evidence_ids": {
+            "items": {
+              "format": "uuid",
+              "type": "string"
+            },
+            "title": "Evidence Ids",
+            "type": "array",
+            "uniqueItems": true
+          },
+          "fact_ids": {
+            "items": {
+              "format": "uuid",
+              "type": "string"
+            },
+            "title": "Fact Ids",
+            "type": "array",
+            "uniqueItems": true
+          },
+          "id": {
+            "minLength": 1,
+            "title": "Id",
+            "type": "string"
+          },
+          "start": {
+            "minimum": 0,
+            "title": "Start",
+            "type": "integer"
+          },
+          "status": {
+            "$ref": "#/components/schemas/ClaimStatus"
+          },
+          "text": {
+            "minLength": 1,
+            "title": "Text",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "start",
+          "end",
+          "text",
+          "fact_ids",
+          "evidence_ids",
+          "status"
+        ],
+        "title": "DraftClaim",
+        "type": "object"
+      },
+      "DraftEditReceipt": {
+        "additionalProperties": false,
+        "properties": {
+          "draft": {
+            "$ref": "#/components/schemas/Draft"
+          },
+          "validation_run": {
+            "$ref": "#/components/schemas/RunReceipt"
+          }
+        },
+        "required": [
+          "draft",
+          "validation_run"
+        ],
+        "title": "DraftEditReceipt",
+        "type": "object"
+      },
+      "DraftValidation": {
+        "enum": [
+          "PENDING",
+          "VALID",
+          "INVALID",
+          "UNKNOWN"
+        ],
+        "title": "DraftValidation",
+        "type": "string"
+      },
+      "EditDraft": {
+        "additionalProperties": false,
+        "properties": {
+          "base_application_revision": {
+            "minimum": 1,
+            "title": "Base Application Revision",
+            "type": "integer"
+          },
+          "text": {
+            "maxLength": 8000,
+            "title": "Text",
+            "type": "string"
+          }
+        },
+        "required": [
+          "base_application_revision",
+          "text"
+        ],
+        "title": "EditDraft",
+        "type": "object"
+      },
+      "Eligibility": {
+        "enum": [
+          "MET",
+          "NOT_MET",
+          "UNKNOWN"
+        ],
+        "title": "Eligibility",
+        "type": "string"
+      },
+      "EmptyCommand": {
+        "additionalProperties": false,
+        "description": "The documented empty JSON payload, distinct from endpoints with no body.",
+        "properties": {},
+        "title": "EmptyCommand",
+        "type": "object"
+      },
+      "Envelope_Account_": {
+        "additionalProperties": false,
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/Account"
+          },
+          "request_id": {
+            "maxLength": 64,
+            "minLength": 1,
+            "title": "Request Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "data",
+          "request_id"
+        ],
+        "title": "Envelope[Account]",
+        "type": "object"
+      },
+      "Envelope_Application_": {
+        "additionalProperties": false,
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/Application"
+          },
+          "request_id": {
+            "maxLength": 64,
+            "minLength": 1,
+            "title": "Request Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "data",
+          "request_id"
+        ],
+        "title": "Envelope[Application]",
+        "type": "object"
+      },
+      "Envelope_Capabilities_": {
+        "additionalProperties": false,
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/Capabilities"
+          },
+          "request_id": {
+            "maxLength": 64,
+            "minLength": 1,
+            "title": "Request Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "data",
+          "request_id"
+        ],
+        "title": "Envelope[Capabilities]",
+        "type": "object"
+      },
+      "Envelope_ChecklistItem_": {
+        "additionalProperties": false,
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/ChecklistItem"
+          },
+          "request_id": {
+            "maxLength": 64,
+            "minLength": 1,
+            "title": "Request Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "data",
+          "request_id"
+        ],
+        "title": "Envelope[ChecklistItem]",
+        "type": "object"
+      },
+      "Envelope_ClarificationSet_": {
+        "additionalProperties": false,
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/ClarificationSet"
+          },
+          "request_id": {
+            "maxLength": 64,
+            "minLength": 1,
+            "title": "Request Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "data",
+          "request_id"
+        ],
+        "title": "Envelope[ClarificationSet]",
+        "type": "object"
+      },
+      "Envelope_Deadline_": {
+        "additionalProperties": false,
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/Deadline"
+          },
+          "request_id": {
+            "maxLength": 64,
+            "minLength": 1,
+            "title": "Request Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "data",
+          "request_id"
+        ],
+        "title": "Envelope[Deadline]",
+        "type": "object"
+      },
+      "Envelope_DeletionAccepted_": {
+        "additionalProperties": false,
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/DeletionAccepted"
+          },
+          "request_id": {
+            "maxLength": 64,
+            "minLength": 1,
+            "title": "Request Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "data",
+          "request_id"
+        ],
+        "title": "Envelope[DeletionAccepted]",
+        "type": "object"
+      },
+      "Envelope_DeletionReceipt_": {
+        "additionalProperties": false,
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/DeletionReceipt"
+          },
+          "request_id": {
+            "maxLength": 64,
+            "minLength": 1,
+            "title": "Request Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "data",
+          "request_id"
+        ],
+        "title": "Envelope[DeletionReceipt]",
+        "type": "object"
+      },
+      "Envelope_DocumentDownload_": {
+        "additionalProperties": false,
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/DocumentDownload"
+          },
+          "request_id": {
+            "maxLength": 64,
+            "minLength": 1,
+            "title": "Request Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "data",
+          "request_id"
+        ],
+        "title": "Envelope[DocumentDownload]",
+        "type": "object"
+      },
+      "Envelope_Document_": {
+        "additionalProperties": false,
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/Document"
+          },
+          "request_id": {
+            "maxLength": 64,
+            "minLength": 1,
+            "title": "Request Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "data",
+          "request_id"
+        ],
+        "title": "Envelope[Document]",
+        "type": "object"
+      },
+      "Envelope_DraftEditReceipt_": {
+        "additionalProperties": false,
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/DraftEditReceipt"
+          },
+          "request_id": {
+            "maxLength": 64,
+            "minLength": 1,
+            "title": "Request Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "data",
+          "request_id"
+        ],
+        "title": "Envelope[DraftEditReceipt]",
+        "type": "object"
+      },
+      "Envelope_Draft_": {
+        "additionalProperties": false,
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/Draft"
+          },
+          "request_id": {
+            "maxLength": 64,
+            "minLength": 1,
+            "title": "Request Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "data",
+          "request_id"
+        ],
+        "title": "Envelope[Draft]",
+        "type": "object"
+      },
+      "Envelope_Evaluation_": {
+        "additionalProperties": false,
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/Evaluation"
+          },
+          "request_id": {
+            "maxLength": 64,
+            "minLength": 1,
+            "title": "Request Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "data",
+          "request_id"
+        ],
+        "title": "Envelope[Evaluation]",
+        "type": "object"
+      },
+      "Envelope_Evidence_": {
+        "additionalProperties": false,
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/Evidence"
+          },
+          "request_id": {
+            "maxLength": 64,
+            "minLength": 1,
+            "title": "Request Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "data",
+          "request_id"
+        ],
+        "title": "Envelope[Evidence]",
+        "type": "object"
+      },
+      "Envelope_FactCandidate_": {
+        "additionalProperties": false,
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/FactCandidate"
+          },
+          "request_id": {
+            "maxLength": 64,
+            "minLength": 1,
+            "title": "Request Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "data",
+          "request_id"
+        ],
+        "title": "Envelope[FactCandidate]",
+        "type": "object"
+      },
+      "Envelope_Fact_": {
+        "additionalProperties": false,
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/Fact"
+          },
+          "request_id": {
+            "maxLength": 64,
+            "minLength": 1,
+            "title": "Request Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "data",
+          "request_id"
+        ],
+        "title": "Envelope[Fact]",
+        "type": "object"
+      },
+      "Envelope_HealthLive_": {
+        "additionalProperties": false,
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/HealthLive"
+          },
+          "request_id": {
+            "maxLength": 64,
+            "minLength": 1,
+            "title": "Request Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "data",
+          "request_id"
+        ],
+        "title": "Envelope[HealthLive]",
+        "type": "object"
+      },
+      "Envelope_HealthReady_": {
+        "additionalProperties": false,
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/HealthReady"
+          },
+          "request_id": {
+            "maxLength": 64,
+            "minLength": 1,
+            "title": "Request Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "data",
+          "request_id"
+        ],
+        "title": "Envelope[HealthReady]",
+        "type": "object"
+      },
+      "Envelope_Notification_": {
+        "additionalProperties": false,
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/Notification"
+          },
+          "request_id": {
+            "maxLength": 64,
+            "minLength": 1,
+            "title": "Request Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "data",
+          "request_id"
+        ],
+        "title": "Envelope[Notification]",
+        "type": "object"
+      },
+      "Envelope_Opportunity_": {
+        "additionalProperties": false,
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/Opportunity"
+          },
+          "request_id": {
+            "maxLength": 64,
+            "minLength": 1,
+            "title": "Request Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "data",
+          "request_id"
+        ],
+        "title": "Envelope[Opportunity]",
+        "type": "object"
+      },
+      "Envelope_Page_Application__": {
+        "additionalProperties": false,
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/Page_Application_"
+          },
+          "request_id": {
+            "maxLength": 64,
+            "minLength": 1,
+            "title": "Request Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "data",
+          "request_id"
+        ],
+        "title": "Envelope[Page[Application]]",
+        "type": "object"
+      },
+      "Envelope_Page_Document__": {
+        "additionalProperties": false,
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/Page_Document_"
+          },
+          "request_id": {
+            "maxLength": 64,
+            "minLength": 1,
+            "title": "Request Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "data",
+          "request_id"
+        ],
+        "title": "Envelope[Page[Document]]",
+        "type": "object"
+      },
+      "Envelope_Page_FactCandidate__": {
+        "additionalProperties": false,
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/Page_FactCandidate_"
+          },
+          "request_id": {
+            "maxLength": 64,
+            "minLength": 1,
+            "title": "Request Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "data",
+          "request_id"
+        ],
+        "title": "Envelope[Page[FactCandidate]]",
+        "type": "object"
+      },
+      "Envelope_Page_Notification__": {
+        "additionalProperties": false,
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/Page_Notification_"
+          },
+          "request_id": {
+            "maxLength": 64,
+            "minLength": 1,
+            "title": "Request Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "data",
+          "request_id"
+        ],
+        "title": "Envelope[Page[Notification]]",
+        "type": "object"
+      },
+      "Envelope_Page_Opportunity__": {
+        "additionalProperties": false,
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/Page_Opportunity_"
+          },
+          "request_id": {
+            "maxLength": 64,
+            "minLength": 1,
+            "title": "Request Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "data",
+          "request_id"
+        ],
+        "title": "Envelope[Page[Opportunity]]",
+        "type": "object"
+      },
+      "Envelope_Page_Profile__": {
+        "additionalProperties": false,
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/Page_Profile_"
+          },
+          "request_id": {
+            "maxLength": 64,
+            "minLength": 1,
+            "title": "Request Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "data",
+          "request_id"
+        ],
+        "title": "Envelope[Page[Profile]]",
+        "type": "object"
+      },
+      "Envelope_Page_Run__": {
+        "additionalProperties": false,
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/Page_Run_"
+          },
+          "request_id": {
+            "maxLength": 64,
+            "minLength": 1,
+            "title": "Request Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "data",
+          "request_id"
+        ],
+        "title": "Envelope[Page[Run]]",
+        "type": "object"
+      },
+      "Envelope_Page_Saved__": {
+        "additionalProperties": false,
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/Page_Saved_"
+          },
+          "request_id": {
+            "maxLength": 64,
+            "minLength": 1,
+            "title": "Request Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "data",
+          "request_id"
+        ],
+        "title": "Envelope[Page[Saved]]",
+        "type": "object"
+      },
+      "Envelope_Page_Watch__": {
+        "additionalProperties": false,
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/Page_Watch_"
+          },
+          "request_id": {
+            "maxLength": 64,
+            "minLength": 1,
+            "title": "Request Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "data",
+          "request_id"
+        ],
+        "title": "Envelope[Page[Watch]]",
+        "type": "object"
+      },
+      "Envelope_Profile_": {
+        "additionalProperties": false,
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/Profile"
+          },
+          "request_id": {
+            "maxLength": 64,
+            "minLength": 1,
+            "title": "Request Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "data",
+          "request_id"
+        ],
+        "title": "Envelope[Profile]",
+        "type": "object"
+      },
+      "Envelope_RequirementSet_": {
+        "additionalProperties": false,
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/RequirementSet"
+          },
+          "request_id": {
+            "maxLength": 64,
+            "minLength": 1,
+            "title": "Request Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "data",
+          "request_id"
+        ],
+        "title": "Envelope[RequirementSet]",
+        "type": "object"
+      },
+      "Envelope_RunReceipt_": {
+        "additionalProperties": false,
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/RunReceipt"
+          },
+          "request_id": {
+            "maxLength": 64,
+            "minLength": 1,
+            "title": "Request Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "data",
+          "request_id"
+        ],
+        "title": "Envelope[RunReceipt]",
+        "type": "object"
+      },
+      "Envelope_Run_": {
+        "additionalProperties": false,
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/Run"
+          },
+          "request_id": {
+            "maxLength": 64,
+            "minLength": 1,
+            "title": "Request Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "data",
+          "request_id"
+        ],
+        "title": "Envelope[Run]",
+        "type": "object"
+      },
+      "Envelope_Saved_": {
+        "additionalProperties": false,
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/Saved"
+          },
+          "request_id": {
+            "maxLength": 64,
+            "minLength": 1,
+            "title": "Request Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "data",
+          "request_id"
+        ],
+        "title": "Envelope[Saved]",
+        "type": "object"
+      },
+      "Envelope_Source_": {
+        "additionalProperties": false,
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/Source"
+          },
+          "request_id": {
+            "maxLength": 64,
+            "minLength": 1,
+            "title": "Request Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "data",
+          "request_id"
+        ],
+        "title": "Envelope[Source]",
+        "type": "object"
+      },
+      "Envelope_UploadIntent_": {
+        "additionalProperties": false,
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/UploadIntent"
+          },
+          "request_id": {
+            "maxLength": 64,
+            "minLength": 1,
+            "title": "Request Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "data",
+          "request_id"
+        ],
+        "title": "Envelope[UploadIntent]",
+        "type": "object"
+      },
+      "Envelope_Usage_": {
+        "additionalProperties": false,
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/Usage"
+          },
+          "request_id": {
+            "maxLength": 64,
+            "minLength": 1,
+            "title": "Request Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "data",
+          "request_id"
+        ],
+        "title": "Envelope[Usage]",
+        "type": "object"
+      },
+      "Envelope_Watch_": {
+        "additionalProperties": false,
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/Watch"
+          },
+          "request_id": {
+            "maxLength": 64,
+            "minLength": 1,
+            "title": "Request Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "data",
+          "request_id"
+        ],
+        "title": "Envelope[Watch]",
+        "type": "object"
+      },
+      "Evaluation": {
+        "additionalProperties": false,
+        "properties": {
+          "as_of": {
+            "format": "date-time",
+            "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}(\\.[0-9]{1,6})?Z$",
+            "title": "As Of",
+            "type": "string"
+          },
+          "availability": {
+            "$ref": "#/components/schemas/Availability"
+          },
+          "currentness": {
+            "$ref": "#/components/schemas/Currentness"
+          },
+          "eligibility": {
+            "$ref": "#/components/schemas/Eligibility"
+          },
+          "fit": {
+            "$ref": "#/components/schemas/Fit"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "leaves": {
+            "items": {
+              "$ref": "#/components/schemas/LeafResult"
+            },
+            "title": "Leaves",
+            "type": "array"
+          },
+          "opportunity_id": {
+            "format": "uuid",
+            "title": "Opportunity Id",
+            "type": "string"
+          },
+          "opportunity_version_id": {
+            "format": "uuid",
+            "title": "Opportunity Version Id",
+            "type": "string"
+          },
+          "profile_version_id": {
+            "format": "uuid",
+            "title": "Profile Version Id",
+            "type": "string"
+          },
+          "readiness": {
+            "$ref": "#/components/schemas/Readiness"
+          },
+          "reason_codes": {
+            "items": {
+              "$ref": "#/components/schemas/ReasonCode"
+            },
+            "title": "Reason Codes",
+            "type": "array"
+          },
+          "requirement_set_id": {
+            "format": "uuid",
+            "title": "Requirement Set Id",
+            "type": "string"
+          },
+          "valid_until": {
+            "format": "date-time",
+            "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}(\\.[0-9]{1,6})?Z$",
+            "title": "Valid Until",
+            "type": "string"
+          },
+          "versions": {
+            "$ref": "#/components/schemas/EvaluationVersions"
+          }
+        },
+        "required": [
+          "id",
+          "opportunity_id",
+          "opportunity_version_id",
+          "profile_version_id",
+          "requirement_set_id",
+          "eligibility",
+          "availability",
+          "fit",
+          "readiness",
+          "currentness",
+          "reason_codes",
+          "leaves",
+          "as_of",
+          "valid_until",
+          "versions"
+        ],
+        "title": "Evaluation",
+        "type": "object"
+      },
+      "EvaluationMethod": {
+        "enum": [
+          "DETERMINISTIC",
+          "SEMANTIC"
+        ],
+        "title": "EvaluationMethod",
+        "type": "string"
+      },
+      "EvaluationState": {
+        "enum": [
+          "CURRENT",
+          "STALE",
+          "NOT_EVALUATED"
+        ],
+        "title": "EvaluationState",
+        "type": "string"
+      },
+      "EvaluationVersions": {
+        "additionalProperties": false,
+        "properties": {
+          "evaluator": {
+            "minLength": 1,
+            "title": "Evaluator",
+            "type": "string"
+          },
+          "freshness": {
+            "minLength": 1,
+            "title": "Freshness",
+            "type": "string"
+          },
+          "prompts": {
+            "minLength": 1,
+            "title": "Prompts",
+            "type": "string"
+          },
+          "registry": {
+            "minLength": 1,
+            "title": "Registry",
+            "type": "string"
+          }
+        },
+        "required": [
+          "evaluator",
+          "prompts",
+          "registry",
+          "freshness"
+        ],
+        "title": "EvaluationVersions",
+        "type": "object"
+      },
+      "Evidence": {
+        "additionalProperties": false,
+        "properties": {
+          "document_id": {
+            "format": "uuid",
+            "title": "Document Id",
+            "type": "string"
+          },
+          "document_version_id": {
+            "format": "uuid",
+            "title": "Document Version Id",
+            "type": "string"
+          },
+          "end": {
+            "minimum": 0,
+            "title": "End",
+            "type": "integer"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "normalized_text_hash": {
+            "pattern": "^[0-9a-f]{64}$",
+            "title": "Normalized Text Hash",
+            "type": "string"
+          },
+          "page": {
+            "minimum": 1,
+            "title": "Page",
+            "type": "integer"
+          },
+          "quote": {
+            "minLength": 1,
+            "title": "Quote",
+            "type": "string"
+          },
+          "start": {
+            "minimum": 0,
+            "title": "Start",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "id",
+          "document_id",
+          "document_version_id",
+          "page",
+          "start",
+          "end",
+          "quote",
+          "normalized_text_hash"
+        ],
+        "title": "Evidence",
+        "type": "object"
+      },
+      "EvidenceExpectation": {
+        "enum": [
+          "KNOWN_FACT",
+          "REQUIRED_CREDENTIAL"
+        ],
+        "title": "EvidenceExpectation",
+        "type": "string"
+      },
+      "ExpectedValue": {
+        "discriminator": {
+          "mapping": {
+            "BOOLEAN": "#/components/schemas/BooleanValue",
+            "COUNTRY_SET": "#/components/schemas/CountrySetValue",
+            "DATE": "#/components/schemas/DateValue",
+            "EXPERIENCE": "#/components/schemas/ExperienceValue",
+            "GPA": "#/components/schemas/GpaValue",
+            "INTERVAL": "#/components/schemas/IntervalValue",
+            "LANGUAGE_TESTS": "#/components/schemas/LanguageTestsValue",
+            "STRING": "#/components/schemas/StringValue",
+            "STRING_SET": "#/components/schemas/StringSetValue",
+            "UNKNOWN": "#/components/schemas/UnknownValue"
+          },
+          "propertyName": "type"
+        },
+        "oneOf": [
+          {
+            "$ref": "#/components/schemas/StringValue"
+          },
+          {
+            "$ref": "#/components/schemas/BooleanValue"
+          },
+          {
+            "$ref": "#/components/schemas/CountrySetValue"
+          },
+          {
+            "$ref": "#/components/schemas/StringSetValue"
+          },
+          {
+            "$ref": "#/components/schemas/GpaValue"
+          },
+          {
+            "$ref": "#/components/schemas/DateValue"
+          },
+          {
+            "$ref": "#/components/schemas/ExperienceValue"
+          },
+          {
+            "$ref": "#/components/schemas/LanguageTestsValue"
+          },
+          {
+            "$ref": "#/components/schemas/UnknownValue"
+          },
+          {
+            "$ref": "#/components/schemas/IntervalValue"
+          }
+        ]
+      },
+      "ExperienceEntry": {
+        "additionalProperties": false,
+        "properties": {
+          "end": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "End"
+          },
+          "relevant": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Relevant"
+          },
+          "role": {
+            "minLength": 1,
+            "title": "Role",
+            "type": "string"
+          },
+          "start": {
+            "format": "date",
+            "title": "Start",
+            "type": "string"
+          }
+        },
+        "required": [
+          "role",
+          "start",
+          "end",
+          "relevant"
+        ],
+        "title": "ExperienceEntry",
+        "type": "object"
+      },
+      "ExperienceValue": {
+        "additionalProperties": false,
+        "properties": {
+          "entries": {
+            "items": {
+              "$ref": "#/components/schemas/ExperienceEntry"
+            },
+            "maxItems": 20,
+            "title": "Entries",
+            "type": "array"
+          },
+          "type": {
+            "const": "EXPERIENCE",
+            "title": "Type",
+            "type": "string"
+          }
+        },
+        "required": [
+          "type",
+          "entries"
+        ],
+        "title": "ExperienceValue",
+        "type": "object"
+      },
+      "Fact": {
+        "additionalProperties": false,
+        "properties": {
+          "attribute": {
+            "$ref": "#/components/schemas/FactAttribute"
+          },
+          "confirmed_at": {
+            "format": "date-time",
+            "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}(\\.[0-9]{1,6})?Z$",
+            "title": "Confirmed At",
+            "type": "string"
+          },
+          "conflict": {
+            "title": "Conflict",
+            "type": "boolean"
+          },
+          "evidence_ids": {
+            "items": {
+              "format": "uuid",
+              "type": "string"
+            },
+            "title": "Evidence Ids",
+            "type": "array",
+            "uniqueItems": true
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "provenance": {
+            "$ref": "#/components/schemas/Provenance"
+          },
+          "valid_from": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Valid From"
+          },
+          "valid_until": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Valid Until"
+          },
+          "value": {
+            "discriminator": {
+              "mapping": {
+                "BOOLEAN": "#/components/schemas/BooleanValue",
+                "COUNTRY_SET": "#/components/schemas/CountrySetValue",
+                "DATE": "#/components/schemas/DateValue",
+                "EXPERIENCE": "#/components/schemas/ExperienceValue",
+                "GPA": "#/components/schemas/GpaValue",
+                "LANGUAGE_TESTS": "#/components/schemas/LanguageTestsValue",
+                "STRING": "#/components/schemas/StringValue",
+                "STRING_SET": "#/components/schemas/StringSetValue",
+                "UNKNOWN": "#/components/schemas/UnknownValue"
+              },
+              "propertyName": "type"
+            },
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/StringValue"
+              },
+              {
+                "$ref": "#/components/schemas/BooleanValue"
+              },
+              {
+                "$ref": "#/components/schemas/CountrySetValue"
+              },
+              {
+                "$ref": "#/components/schemas/StringSetValue"
+              },
+              {
+                "$ref": "#/components/schemas/GpaValue"
+              },
+              {
+                "$ref": "#/components/schemas/DateValue"
+              },
+              {
+                "$ref": "#/components/schemas/ExperienceValue"
+              },
+              {
+                "$ref": "#/components/schemas/LanguageTestsValue"
+              },
+              {
+                "$ref": "#/components/schemas/UnknownValue"
+              }
+            ],
+            "title": "Value"
+          }
+        },
+        "required": [
+          "attribute",
+          "value",
+          "evidence_ids",
+          "id",
+          "provenance",
+          "confirmed_at",
+          "valid_from",
+          "valid_until",
+          "conflict"
+        ],
+        "title": "Fact",
+        "type": "object"
+      },
+      "FactAttribute": {
+        "enum": [
+          "location.country",
+          "citizenship.countries",
+          "work_authorization.countries",
+          "education.enrolled",
+          "education.level",
+          "education.field",
+          "education.institution",
+          "education.graduation",
+          "date_of_birth",
+          "education.gpa",
+          "skills",
+          "experience",
+          "language_tests"
+        ],
+        "title": "FactAttribute",
+        "type": "string"
+      },
+      "FactCandidate": {
+        "additionalProperties": false,
+        "properties": {
+          "attribute": {
+            "$ref": "#/components/schemas/FactAttribute"
+          },
+          "document_id": {
+            "format": "uuid",
+            "title": "Document Id",
+            "type": "string"
+          },
+          "evidence_ids": {
+            "items": {
+              "format": "uuid",
+              "type": "string"
+            },
+            "title": "Evidence Ids",
+            "type": "array",
+            "uniqueItems": true
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "issues": {
+            "items": {
+              "minLength": 1,
+              "type": "string"
+            },
+            "title": "Issues",
+            "type": "array"
+          },
+          "state": {
+            "$ref": "#/components/schemas/CandidateState"
+          },
+          "value": {
+            "discriminator": {
+              "mapping": {
+                "BOOLEAN": "#/components/schemas/BooleanValue",
+                "COUNTRY_SET": "#/components/schemas/CountrySetValue",
+                "DATE": "#/components/schemas/DateValue",
+                "EXPERIENCE": "#/components/schemas/ExperienceValue",
+                "GPA": "#/components/schemas/GpaValue",
+                "LANGUAGE_TESTS": "#/components/schemas/LanguageTestsValue",
+                "STRING": "#/components/schemas/StringValue",
+                "STRING_SET": "#/components/schemas/StringSetValue",
+                "UNKNOWN": "#/components/schemas/UnknownValue"
+              },
+              "propertyName": "type"
+            },
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/StringValue"
+              },
+              {
+                "$ref": "#/components/schemas/BooleanValue"
+              },
+              {
+                "$ref": "#/components/schemas/CountrySetValue"
+              },
+              {
+                "$ref": "#/components/schemas/StringSetValue"
+              },
+              {
+                "$ref": "#/components/schemas/GpaValue"
+              },
+              {
+                "$ref": "#/components/schemas/DateValue"
+              },
+              {
+                "$ref": "#/components/schemas/ExperienceValue"
+              },
+              {
+                "$ref": "#/components/schemas/LanguageTestsValue"
+              },
+              {
+                "$ref": "#/components/schemas/UnknownValue"
+              }
+            ],
+            "title": "Value"
+          }
+        },
+        "required": [
+          "attribute",
+          "value",
+          "evidence_ids",
+          "id",
+          "document_id",
+          "state",
+          "issues"
+        ],
+        "title": "FactCandidate",
+        "type": "object"
+      },
+      "FactInput": {
+        "additionalProperties": false,
+        "properties": {
+          "attribute": {
+            "$ref": "#/components/schemas/FactAttribute"
+          },
+          "evidence_ids": {
+            "items": {
+              "format": "uuid",
+              "type": "string"
+            },
+            "title": "Evidence Ids",
+            "type": "array",
+            "uniqueItems": true
+          },
+          "value": {
+            "discriminator": {
+              "mapping": {
+                "BOOLEAN": "#/components/schemas/BooleanValue",
+                "COUNTRY_SET": "#/components/schemas/CountrySetValue",
+                "DATE": "#/components/schemas/DateValue",
+                "EXPERIENCE": "#/components/schemas/ExperienceValue",
+                "GPA": "#/components/schemas/GpaValue",
+                "LANGUAGE_TESTS": "#/components/schemas/LanguageTestsValue",
+                "STRING": "#/components/schemas/StringValue",
+                "STRING_SET": "#/components/schemas/StringSetValue",
+                "UNKNOWN": "#/components/schemas/UnknownValue"
+              },
+              "propertyName": "type"
+            },
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/StringValue"
+              },
+              {
+                "$ref": "#/components/schemas/BooleanValue"
+              },
+              {
+                "$ref": "#/components/schemas/CountrySetValue"
+              },
+              {
+                "$ref": "#/components/schemas/StringSetValue"
+              },
+              {
+                "$ref": "#/components/schemas/GpaValue"
+              },
+              {
+                "$ref": "#/components/schemas/DateValue"
+              },
+              {
+                "$ref": "#/components/schemas/ExperienceValue"
+              },
+              {
+                "$ref": "#/components/schemas/LanguageTestsValue"
+              },
+              {
+                "$ref": "#/components/schemas/UnknownValue"
+              }
+            ],
+            "title": "Value"
+          }
+        },
+        "required": [
+          "attribute",
+          "value",
+          "evidence_ids"
+        ],
+        "title": "FactInput",
+        "type": "object"
+      },
+      "FactType": {
+        "enum": [
+          "STRING",
+          "BOOLEAN",
+          "COUNTRY_SET",
+          "STRING_SET",
+          "GPA",
+          "DATE",
+          "EXPERIENCE",
+          "LANGUAGE_TESTS",
+          "UNKNOWN"
+        ],
+        "title": "FactType",
+        "type": "string"
+      },
+      "FactValue": {
+        "discriminator": {
+          "mapping": {
+            "BOOLEAN": "#/components/schemas/BooleanValue",
+            "COUNTRY_SET": "#/components/schemas/CountrySetValue",
+            "DATE": "#/components/schemas/DateValue",
+            "EXPERIENCE": "#/components/schemas/ExperienceValue",
+            "GPA": "#/components/schemas/GpaValue",
+            "LANGUAGE_TESTS": "#/components/schemas/LanguageTestsValue",
+            "STRING": "#/components/schemas/StringValue",
+            "STRING_SET": "#/components/schemas/StringSetValue",
+            "UNKNOWN": "#/components/schemas/UnknownValue"
+          },
+          "propertyName": "type"
+        },
+        "oneOf": [
+          {
+            "$ref": "#/components/schemas/StringValue"
+          },
+          {
+            "$ref": "#/components/schemas/BooleanValue"
+          },
+          {
+            "$ref": "#/components/schemas/CountrySetValue"
+          },
+          {
+            "$ref": "#/components/schemas/StringSetValue"
+          },
+          {
+            "$ref": "#/components/schemas/GpaValue"
+          },
+          {
+            "$ref": "#/components/schemas/DateValue"
+          },
+          {
+            "$ref": "#/components/schemas/ExperienceValue"
+          },
+          {
+            "$ref": "#/components/schemas/LanguageTestsValue"
+          },
+          {
+            "$ref": "#/components/schemas/UnknownValue"
+          }
+        ]
+      },
+      "FieldError": {
+        "additionalProperties": false,
+        "properties": {
+          "message": {
+            "minLength": 1,
+            "title": "Message",
+            "type": "string"
+          },
+          "path": {
+            "minLength": 1,
+            "title": "Path",
+            "type": "string"
+          }
+        },
+        "required": [
+          "path",
+          "message"
+        ],
+        "title": "FieldError",
+        "type": "object"
+      },
+      "Fit": {
+        "additionalProperties": false,
+        "properties": {
+          "components": {
+            "items": {
+              "$ref": "#/components/schemas/FitComponent"
+            },
+            "title": "Components",
+            "type": "array"
+          },
+          "coverage": {
+            "maximum": 1,
+            "minimum": 0,
+            "title": "Coverage",
+            "type": "number"
+          },
+          "score": {
+            "anyOf": [
+              {
+                "maximum": 100,
+                "minimum": 0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Score"
+          }
+        },
+        "required": [
+          "score",
+          "coverage",
+          "components"
+        ],
+        "title": "Fit",
+        "type": "object"
+      },
+      "FitComponent": {
+        "additionalProperties": false,
+        "properties": {
+          "name": {
+            "minLength": 1,
+            "title": "Name",
+            "type": "string"
+          },
+          "value": {
+            "anyOf": [
+              {
+                "maximum": 1,
+                "minimum": 0,
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Value"
+          },
+          "weight": {
+            "maximum": 1,
+            "minimum": 0,
+            "title": "Weight",
+            "type": "number"
+          }
+        },
+        "required": [
+          "name",
+          "weight",
+          "value"
+        ],
+        "title": "FitComponent",
+        "type": "object"
+      },
+      "Freshness": {
+        "additionalProperties": false,
+        "properties": {
+          "checked_at": {
+            "format": "date-time",
+            "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}(\\.[0-9]{1,6})?Z$",
+            "title": "Checked At",
+            "type": "string"
+          },
+          "expires_at": {
+            "format": "date-time",
+            "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}(\\.[0-9]{1,6})?Z$",
+            "title": "Expires At",
+            "type": "string"
+          },
+          "state": {
+            "$ref": "#/components/schemas/FreshnessState"
+          }
+        },
+        "required": [
+          "state",
+          "checked_at",
+          "expires_at"
+        ],
+        "title": "Freshness",
+        "type": "object"
+      },
+      "FreshnessState": {
+        "enum": [
+          "FRESH",
+          "STALE",
+          "UNAVAILABLE"
+        ],
+        "title": "FreshnessState",
+        "type": "string"
+      },
+      "GpaValue": {
+        "additionalProperties": false,
+        "properties": {
+          "number": {
+            "pattern": "^(0|[1-9][0-9]*)(\\.[0-9]+)?$",
+            "title": "Number",
+            "type": "string"
+          },
+          "scale_max": {
+            "pattern": "^(0|[1-9][0-9]*)(\\.[0-9]+)?$",
+            "title": "Scale Max",
+            "type": "string"
+          },
+          "type": {
+            "const": "GPA",
+            "title": "Type",
+            "type": "string"
+          }
+        },
+        "required": [
+          "type",
+          "number",
+          "scale_max"
+        ],
+        "title": "GpaValue",
+        "type": "object"
+      },
+      "HealthLive": {
+        "additionalProperties": false,
+        "properties": {
+          "status": {
+            "const": "ok",
+            "title": "Status",
+            "type": "string"
+          }
+        },
+        "required": [
+          "status"
+        ],
+        "title": "HealthLive",
+        "type": "object"
+      },
+      "HealthReady": {
+        "additionalProperties": false,
+        "properties": {
+          "status": {
+            "const": "ready",
+            "title": "Status",
+            "type": "string"
+          }
+        },
+        "required": [
+          "status"
+        ],
+        "title": "HealthReady",
+        "type": "object"
+      },
+      "ImportOpportunity": {
+        "additionalProperties": false,
+        "properties": {
+          "profile_version_id": {
+            "format": "uuid",
+            "title": "Profile Version Id",
+            "type": "string"
+          },
+          "url": {
+            "maxLength": 2048,
+            "minLength": 1,
+            "title": "Url",
+            "type": "string"
+          }
+        },
+        "required": [
+          "profile_version_id",
+          "url"
+        ],
+        "title": "ImportOpportunity",
+        "type": "object"
+      },
+      "Interpretation": {
+        "enum": [
+          "DIRECT",
+          "SEMANTIC_REVIEWED",
+          "UNRESOLVED"
+        ],
+        "title": "Interpretation",
+        "type": "string"
+      },
+      "IntervalValue": {
+        "additionalProperties": false,
+        "properties": {
+          "lower": {
+            "discriminator": {
+              "mapping": {
+                "DATE": "#/components/schemas/DateValue",
+                "GPA": "#/components/schemas/GpaValue",
+                "STRING": "#/components/schemas/StringValue"
+              },
+              "propertyName": "type"
+            },
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/StringValue"
+              },
+              {
+                "$ref": "#/components/schemas/GpaValue"
+              },
+              {
+                "$ref": "#/components/schemas/DateValue"
+              }
+            ],
+            "title": "Lower"
+          },
+          "lower_inclusive": {
+            "title": "Lower Inclusive",
+            "type": "boolean"
+          },
+          "type": {
+            "const": "INTERVAL",
+            "title": "Type",
+            "type": "string"
+          },
+          "upper": {
+            "discriminator": {
+              "mapping": {
+                "DATE": "#/components/schemas/DateValue",
+                "GPA": "#/components/schemas/GpaValue",
+                "STRING": "#/components/schemas/StringValue"
+              },
+              "propertyName": "type"
+            },
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/StringValue"
+              },
+              {
+                "$ref": "#/components/schemas/GpaValue"
+              },
+              {
+                "$ref": "#/components/schemas/DateValue"
+              }
+            ],
+            "title": "Upper"
+          },
+          "upper_inclusive": {
+            "title": "Upper Inclusive",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "type",
+          "lower",
+          "upper",
+          "lower_inclusive",
+          "upper_inclusive"
+        ],
+        "title": "IntervalValue",
+        "type": "object"
+      },
+      "Lane": {
+        "enum": [
+          "INTERNSHIP_RESEARCH",
+          "SCHOLARSHIP_PROGRAM"
+        ],
+        "title": "Lane",
+        "type": "string"
+      },
+      "LanguageTestEntry": {
+        "additionalProperties": false,
+        "properties": {
+          "components": {
+            "additionalProperties": {
+              "pattern": "^(0|[1-9][0-9]*)(\\.[0-9]+)?$",
+              "type": "string"
+            },
+            "title": "Components",
+            "type": "object"
+          },
+          "taken_on": {
+            "format": "date",
+            "title": "Taken On",
+            "type": "string"
+          },
+          "test": {
+            "minLength": 1,
+            "title": "Test",
+            "type": "string"
+          },
+          "total": {
+            "pattern": "^(0|[1-9][0-9]*)(\\.[0-9]+)?$",
+            "title": "Total",
+            "type": "string"
+          }
+        },
+        "required": [
+          "test",
+          "total",
+          "components",
+          "taken_on"
+        ],
+        "title": "LanguageTestEntry",
+        "type": "object"
+      },
+      "LanguageTestsValue": {
+        "additionalProperties": false,
+        "properties": {
+          "entries": {
+            "items": {
+              "$ref": "#/components/schemas/LanguageTestEntry"
+            },
+            "maxItems": 10,
+            "title": "Entries",
+            "type": "array"
+          },
+          "type": {
+            "const": "LANGUAGE_TESTS",
+            "title": "Type",
+            "type": "string"
+          }
+        },
+        "required": [
+          "type",
+          "entries"
+        ],
+        "title": "LanguageTestsValue",
+        "type": "object"
+      },
+      "LeafResult": {
+        "additionalProperties": false,
+        "properties": {
+          "evidence_ids": {
+            "items": {
+              "format": "uuid",
+              "type": "string"
+            },
+            "title": "Evidence Ids",
+            "type": "array",
+            "uniqueItems": true
+          },
+          "explanation": {
+            "minLength": 1,
+            "title": "Explanation",
+            "type": "string"
+          },
+          "fact_ids": {
+            "items": {
+              "format": "uuid",
+              "type": "string"
+            },
+            "title": "Fact Ids",
+            "type": "array",
+            "uniqueItems": true
+          },
+          "method": {
+            "$ref": "#/components/schemas/EvaluationMethod"
+          },
+          "node_id": {
+            "minLength": 1,
+            "title": "Node Id",
+            "type": "string"
+          },
+          "reason_codes": {
+            "items": {
+              "$ref": "#/components/schemas/ReasonCode"
+            },
+            "title": "Reason Codes",
+            "type": "array"
+          },
+          "source_span_ids": {
+            "items": {
+              "format": "uuid",
+              "type": "string"
+            },
+            "title": "Source Span Ids",
+            "type": "array",
+            "uniqueItems": true
+          },
+          "truth": {
+            "$ref": "#/components/schemas/Truth"
+          }
+        },
+        "required": [
+          "node_id",
+          "truth",
+          "method",
+          "fact_ids",
+          "evidence_ids",
+          "source_span_ids",
+          "reason_codes",
+          "explanation"
+        ],
+        "title": "LeafResult",
+        "type": "object"
+      },
+      "Modality": {
+        "enum": [
+          "MANDATORY",
+          "PREFERRED",
+          "OPTIONAL",
+          "AMBIGUOUS"
+        ],
+        "title": "Modality",
+        "type": "string"
+      },
+      "NotNode": {
+        "additionalProperties": false,
+        "properties": {
+          "child": {
+            "minLength": 1,
+            "title": "Child",
+            "type": "string"
+          },
+          "id": {
+            "minLength": 1,
+            "title": "Id",
+            "type": "string"
+          },
+          "type": {
+            "const": "NOT",
+            "title": "Type",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "type",
+          "child"
+        ],
+        "title": "NotNode",
+        "type": "object"
+      },
+      "Notification": {
+        "additionalProperties": false,
+        "properties": {
+          "created_at": {
+            "format": "date-time",
+            "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}(\\.[0-9]{1,6})?Z$",
+            "title": "Created At",
+            "type": "string"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "kind": {
+            "$ref": "#/components/schemas/NotificationKind"
+          },
+          "opportunity_id": {
+            "format": "uuid",
+            "title": "Opportunity Id",
+            "type": "string"
+          },
+          "opportunity_version_id": {
+            "format": "uuid",
+            "title": "Opportunity Version Id",
+            "type": "string"
+          },
+          "read_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}(\\.[0-9]{1,6})?Z$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Read At"
+          },
+          "summary": {
+            "minLength": 1,
+            "title": "Summary",
+            "type": "string"
+          },
+          "watch_id": {
+            "format": "uuid",
+            "title": "Watch Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "watch_id",
+          "opportunity_id",
+          "opportunity_version_id",
+          "kind",
+          "summary",
+          "read_at",
+          "created_at"
+        ],
+        "title": "Notification",
+        "type": "object"
+      },
+      "NotificationKind": {
+        "enum": [
+          "SOURCE_CHANGED",
+          "SOURCE_UNAVAILABLE"
+        ],
+        "title": "NotificationKind",
+        "type": "string"
+      },
+      "Operator": {
+        "enum": [
+          "EQ",
+          "NE",
+          "GT",
+          "GTE",
+          "LT",
+          "LTE",
+          "IN",
+          "NOT_IN",
+          "BEFORE",
+          "AFTER",
+          "OVERLAPS",
+          "EXISTS",
+          "SEMANTIC_MATCH"
+        ],
+        "title": "Operator",
+        "type": "string"
+      },
+      "Opportunity": {
+        "additionalProperties": false,
+        "properties": {
+          "authority": {
+            "$ref": "#/components/schemas/Authority"
+          },
+          "availability": {
+            "$ref": "#/components/schemas/Availability"
+          },
+          "cycle": {
+            "minLength": 1,
+            "title": "Cycle",
+            "type": "string"
+          },
+          "deadline": {
+            "$ref": "#/components/schemas/Deadline"
+          },
+          "evaluation_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Evaluation Id"
+          },
+          "evaluation_state": {
+            "$ref": "#/components/schemas/EvaluationState"
+          },
+          "freshness": {
+            "$ref": "#/components/schemas/Freshness"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "lane": {
+            "$ref": "#/components/schemas/Lane"
+          },
+          "location_countries": {
+            "items": {
+              "enum": [
+                "AD",
+                "AE",
+                "AF",
+                "AG",
+                "AI",
+                "AL",
+                "AM",
+                "AO",
+                "AQ",
+                "AR",
+                "AS",
+                "AT",
+                "AU",
+                "AW",
+                "AX",
+                "AZ",
+                "BA",
+                "BB",
+                "BD",
+                "BE",
+                "BF",
+                "BG",
+                "BH",
+                "BI",
+                "BJ",
+                "BL",
+                "BM",
+                "BN",
+                "BO",
+                "BQ",
+                "BR",
+                "BS",
+                "BT",
+                "BV",
+                "BW",
+                "BY",
+                "BZ",
+                "CA",
+                "CC",
+                "CD",
+                "CF",
+                "CG",
+                "CH",
+                "CI",
+                "CK",
+                "CL",
+                "CM",
+                "CN",
+                "CO",
+                "CR",
+                "CU",
+                "CV",
+                "CW",
+                "CX",
+                "CY",
+                "CZ",
+                "DE",
+                "DJ",
+                "DK",
+                "DM",
+                "DO",
+                "DZ",
+                "EC",
+                "EE",
+                "EG",
+                "EH",
+                "ER",
+                "ES",
+                "ET",
+                "FI",
+                "FJ",
+                "FK",
+                "FM",
+                "FO",
+                "FR",
+                "GA",
+                "GB",
+                "GD",
+                "GE",
+                "GF",
+                "GG",
+                "GH",
+                "GI",
+                "GL",
+                "GM",
+                "GN",
+                "GP",
+                "GQ",
+                "GR",
+                "GS",
+                "GT",
+                "GU",
+                "GW",
+                "GY",
+                "HK",
+                "HM",
+                "HN",
+                "HR",
+                "HT",
+                "HU",
+                "ID",
+                "IE",
+                "IL",
+                "IM",
+                "IN",
+                "IO",
+                "IQ",
+                "IR",
+                "IS",
+                "IT",
+                "JE",
+                "JM",
+                "JO",
+                "JP",
+                "KE",
+                "KG",
+                "KH",
+                "KI",
+                "KM",
+                "KN",
+                "KP",
+                "KR",
+                "KW",
+                "KY",
+                "KZ",
+                "LA",
+                "LB",
+                "LC",
+                "LI",
+                "LK",
+                "LR",
+                "LS",
+                "LT",
+                "LU",
+                "LV",
+                "LY",
+                "MA",
+                "MC",
+                "MD",
+                "ME",
+                "MF",
+                "MG",
+                "MH",
+                "MK",
+                "ML",
+                "MM",
+                "MN",
+                "MO",
+                "MP",
+                "MQ",
+                "MR",
+                "MS",
+                "MT",
+                "MU",
+                "MV",
+                "MW",
+                "MX",
+                "MY",
+                "MZ",
+                "NA",
+                "NC",
+                "NE",
+                "NF",
+                "NG",
+                "NI",
+                "NL",
+                "NO",
+                "NP",
+                "NR",
+                "NU",
+                "NZ",
+                "OM",
+                "PA",
+                "PE",
+                "PF",
+                "PG",
+                "PH",
+                "PK",
+                "PL",
+                "PM",
+                "PN",
+                "PR",
+                "PS",
+                "PT",
+                "PW",
+                "PY",
+                "QA",
+                "RE",
+                "RO",
+                "RS",
+                "RU",
+                "RW",
+                "SA",
+                "SB",
+                "SC",
+                "SD",
+                "SE",
+                "SG",
+                "SH",
+                "SI",
+                "SJ",
+                "SK",
+                "SL",
+                "SM",
+                "SN",
+                "SO",
+                "SR",
+                "SS",
+                "ST",
+                "SV",
+                "SX",
+                "SY",
+                "SZ",
+                "TC",
+                "TD",
+                "TF",
+                "TG",
+                "TH",
+                "TJ",
+                "TK",
+                "TL",
+                "TM",
+                "TN",
+                "TO",
+                "TR",
+                "TT",
+                "TV",
+                "TW",
+                "TZ",
+                "UA",
+                "UG",
+                "UM",
+                "US",
+                "UY",
+                "UZ",
+                "VA",
+                "VC",
+                "VE",
+                "VG",
+                "VI",
+                "VN",
+                "VU",
+                "WF",
+                "WS",
+                "YE",
+                "YT",
+                "ZA",
+                "ZM",
+                "ZW"
+              ],
+              "type": "string"
+            },
+            "title": "Location Countries",
+            "type": "array"
+          },
+          "official_url": {
+            "minLength": 1,
+            "title": "Official Url",
+            "type": "string"
+          },
+          "provider": {
+            "minLength": 1,
+            "title": "Provider",
+            "type": "string"
+          },
+          "remote": {
+            "title": "Remote",
+            "type": "boolean"
+          },
+          "requirement_set_id": {
+            "format": "uuid",
+            "title": "Requirement Set Id",
+            "type": "string"
+          },
+          "title": {
+            "minLength": 1,
+            "title": "Title",
+            "type": "string"
+          },
+          "version_id": {
+            "format": "uuid",
+            "title": "Version Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "version_id",
+          "title",
+          "provider",
+          "lane",
+          "cycle",
+          "location_countries",
+          "remote",
+          "official_url",
+          "authority",
+          "availability",
+          "deadline",
+          "freshness",
+          "requirement_set_id",
+          "evaluation_id",
+          "evaluation_state"
+        ],
+        "title": "Opportunity",
+        "type": "object"
+      },
+      "Page_Application_": {
+        "additionalProperties": false,
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/Application"
+            },
+            "maxItems": 100,
+            "title": "Items",
+            "type": "array"
+          },
+          "next_cursor": {
+            "anyOf": [
+              {
+                "minLength": 1,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Next Cursor"
+          }
+        },
+        "required": [
+          "items",
+          "next_cursor"
+        ],
+        "title": "Page[Application]",
+        "type": "object"
+      },
+      "Page_Document_": {
+        "additionalProperties": false,
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/Document"
+            },
+            "maxItems": 100,
+            "title": "Items",
+            "type": "array"
+          },
+          "next_cursor": {
+            "anyOf": [
+              {
+                "minLength": 1,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Next Cursor"
+          }
+        },
+        "required": [
+          "items",
+          "next_cursor"
+        ],
+        "title": "Page[Document]",
+        "type": "object"
+      },
+      "Page_FactCandidate_": {
+        "additionalProperties": false,
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/FactCandidate"
+            },
+            "maxItems": 100,
+            "title": "Items",
+            "type": "array"
+          },
+          "next_cursor": {
+            "anyOf": [
+              {
+                "minLength": 1,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Next Cursor"
+          }
+        },
+        "required": [
+          "items",
+          "next_cursor"
+        ],
+        "title": "Page[FactCandidate]",
+        "type": "object"
+      },
+      "Page_Notification_": {
+        "additionalProperties": false,
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/Notification"
+            },
+            "maxItems": 100,
+            "title": "Items",
+            "type": "array"
+          },
+          "next_cursor": {
+            "anyOf": [
+              {
+                "minLength": 1,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Next Cursor"
+          }
+        },
+        "required": [
+          "items",
+          "next_cursor"
+        ],
+        "title": "Page[Notification]",
+        "type": "object"
+      },
+      "Page_Opportunity_": {
+        "additionalProperties": false,
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/Opportunity"
+            },
+            "maxItems": 100,
+            "title": "Items",
+            "type": "array"
+          },
+          "next_cursor": {
+            "anyOf": [
+              {
+                "minLength": 1,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Next Cursor"
+          }
+        },
+        "required": [
+          "items",
+          "next_cursor"
+        ],
+        "title": "Page[Opportunity]",
+        "type": "object"
+      },
+      "Page_Profile_": {
+        "additionalProperties": false,
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/Profile"
+            },
+            "maxItems": 100,
+            "title": "Items",
+            "type": "array"
+          },
+          "next_cursor": {
+            "anyOf": [
+              {
+                "minLength": 1,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Next Cursor"
+          }
+        },
+        "required": [
+          "items",
+          "next_cursor"
+        ],
+        "title": "Page[Profile]",
+        "type": "object"
+      },
+      "Page_Run_": {
+        "additionalProperties": false,
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/Run"
+            },
+            "maxItems": 100,
+            "title": "Items",
+            "type": "array"
+          },
+          "next_cursor": {
+            "anyOf": [
+              {
+                "minLength": 1,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Next Cursor"
+          }
+        },
+        "required": [
+          "items",
+          "next_cursor"
+        ],
+        "title": "Page[Run]",
+        "type": "object"
+      },
+      "Page_Saved_": {
+        "additionalProperties": false,
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/Saved"
+            },
+            "maxItems": 100,
+            "title": "Items",
+            "type": "array"
+          },
+          "next_cursor": {
+            "anyOf": [
+              {
+                "minLength": 1,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Next Cursor"
+          }
+        },
+        "required": [
+          "items",
+          "next_cursor"
+        ],
+        "title": "Page[Saved]",
+        "type": "object"
+      },
+      "Page_Watch_": {
+        "additionalProperties": false,
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/Watch"
+            },
+            "maxItems": 100,
+            "title": "Items",
+            "type": "array"
+          },
+          "next_cursor": {
+            "anyOf": [
+              {
+                "minLength": 1,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Next Cursor"
+          }
+        },
+        "required": [
+          "items",
+          "next_cursor"
+        ],
+        "title": "Page[Watch]",
+        "type": "object"
+      },
+      "PatchChecklistItem": {
+        "additionalProperties": false,
+        "properties": {
+          "base_revision": {
+            "minimum": 1,
+            "title": "Base Revision",
+            "type": "integer"
+          },
+          "evidence_ids": {
+            "items": {
+              "format": "uuid",
+              "type": "string"
+            },
+            "maxLength": 10,
+            "title": "Evidence Ids",
+            "type": "array",
+            "uniqueItems": true
+          },
+          "status": {
+            "$ref": "#/components/schemas/ChecklistStatus"
+          }
+        },
+        "required": [
+          "base_revision",
+          "status",
+          "evidence_ids"
+        ],
+        "title": "PatchChecklistItem",
+        "type": "object"
+      },
+      "PatchMe": {
+        "additionalProperties": false,
+        "properties": {
+          "consent_version": {
+            "anyOf": [
+              {
+                "minLength": 1,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Consent Version"
+          },
+          "display_name": {
+            "anyOf": [
+              {
+                "maxLength": 80,
+                "minLength": 1,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Display Name"
+          },
+          "timezone": {
+            "anyOf": [
+              {
+                "minLength": 1,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Timezone"
+          }
+        },
+        "title": "PatchMe",
+        "type": "object"
+      },
+      "PatchProfile": {
+        "additionalProperties": false,
+        "properties": {
+          "base_profile_version_id": {
+            "format": "uuid",
+            "title": "Base Profile Version Id",
+            "type": "string"
+          },
+          "changes": {
+            "items": {
+              "$ref": "#/components/schemas/FactInput"
+            },
+            "maxItems": 100,
+            "title": "Changes",
+            "type": "array"
+          },
+          "remove_attributes": {
+            "items": {
+              "$ref": "#/components/schemas/FactAttribute"
+            },
+            "maxItems": 100,
+            "title": "Remove Attributes",
+            "type": "array"
+          }
+        },
+        "required": [
+          "base_profile_version_id",
+          "changes",
+          "remove_attributes"
+        ],
+        "title": "PatchProfile",
+        "type": "object"
+      },
+      "PatchWatch": {
+        "additionalProperties": false,
+        "properties": {
+          "base_revision": {
+            "minimum": 1,
+            "title": "Base Revision",
+            "type": "integer"
+          },
+          "enabled": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Enabled"
+          },
+          "interval_hours": {
+            "anyOf": [
+              {
+                "enum": [
+                  24,
+                  72
+                ],
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Interval Hours"
+          }
+        },
+        "required": [
+          "base_revision"
+        ],
+        "title": "PatchWatch",
+        "type": "object"
+      },
+      "PredicateNode": {
+        "additionalProperties": false,
+        "properties": {
+          "attribute": {
+            "minLength": 1,
+            "title": "Attribute",
+            "type": "string"
+          },
+          "evidence_expectation": {
+            "$ref": "#/components/schemas/EvidenceExpectation"
+          },
+          "expected": {
+            "discriminator": {
+              "mapping": {
+                "BOOLEAN": "#/components/schemas/BooleanValue",
+                "COUNTRY_SET": "#/components/schemas/CountrySetValue",
+                "DATE": "#/components/schemas/DateValue",
+                "EXPERIENCE": "#/components/schemas/ExperienceValue",
+                "GPA": "#/components/schemas/GpaValue",
+                "INTERVAL": "#/components/schemas/IntervalValue",
+                "LANGUAGE_TESTS": "#/components/schemas/LanguageTestsValue",
+                "STRING": "#/components/schemas/StringValue",
+                "STRING_SET": "#/components/schemas/StringSetValue",
+                "UNKNOWN": "#/components/schemas/UnknownValue"
+              },
+              "propertyName": "type"
+            },
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/StringValue"
+              },
+              {
+                "$ref": "#/components/schemas/BooleanValue"
+              },
+              {
+                "$ref": "#/components/schemas/CountrySetValue"
+              },
+              {
+                "$ref": "#/components/schemas/StringSetValue"
+              },
+              {
+                "$ref": "#/components/schemas/GpaValue"
+              },
+              {
+                "$ref": "#/components/schemas/DateValue"
+              },
+              {
+                "$ref": "#/components/schemas/ExperienceValue"
+              },
+              {
+                "$ref": "#/components/schemas/LanguageTestsValue"
+              },
+              {
+                "$ref": "#/components/schemas/UnknownValue"
+              },
+              {
+                "$ref": "#/components/schemas/IntervalValue"
+              }
+            ],
+            "title": "Expected"
+          },
+          "id": {
+            "minLength": 1,
+            "title": "Id",
+            "type": "string"
+          },
+          "interpretation": {
+            "$ref": "#/components/schemas/Interpretation"
+          },
+          "modality": {
+            "$ref": "#/components/schemas/Modality"
+          },
+          "operator": {
+            "$ref": "#/components/schemas/Operator"
+          },
+          "reference_date": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/DateValue"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "reference_time": {
+            "$ref": "#/components/schemas/ReferenceTime"
+          },
+          "scope": {
+            "$ref": "#/components/schemas/RuleScope"
+          },
+          "source_span_ids": {
+            "items": {
+              "format": "uuid",
+              "type": "string"
+            },
+            "minLength": 1,
+            "title": "Source Span Ids",
+            "type": "array",
+            "uniqueItems": true
+          },
+          "type": {
+            "const": "PREDICATE",
+            "title": "Type",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "type",
+          "modality",
+          "attribute",
+          "operator",
+          "expected",
+          "source_span_ids",
+          "scope",
+          "reference_time",
+          "interpretation",
+          "evidence_expectation"
+        ],
+        "title": "PredicateNode",
+        "type": "object"
+      },
+      "Problem": {
+        "additionalProperties": false,
+        "properties": {
+          "code": {
+            "pattern": "^[A-Z][A-Z0-9_]*$",
+            "title": "Code",
+            "type": "string"
+          },
+          "detail": {
+            "minLength": 1,
+            "title": "Detail",
+            "type": "string"
+          },
+          "errors": {
+            "items": {
+              "$ref": "#/components/schemas/FieldError"
+            },
+            "title": "Errors",
+            "type": "array"
+          },
+          "request_id": {
+            "maxLength": 64,
+            "minLength": 1,
+            "title": "Request Id",
+            "type": "string"
+          },
+          "retryable": {
+            "title": "Retryable",
+            "type": "boolean"
+          },
+          "status": {
+            "maximum": 599,
+            "minimum": 400,
+            "title": "Status",
+            "type": "integer"
+          },
+          "title": {
+            "minLength": 1,
+            "title": "Title",
+            "type": "string"
+          },
+          "type": {
+            "pattern": "^urn:benefitbridge:problem:[a-z0-9-]+$",
+            "title": "Type",
+            "type": "string"
+          }
+        },
+        "required": [
+          "type",
+          "title",
+          "status",
+          "detail",
+          "code",
+          "request_id",
+          "errors",
+          "retryable"
+        ],
+        "title": "Problem",
+        "type": "object"
+      },
+      "Profile": {
+        "additionalProperties": false,
+        "properties": {
+          "facts": {
+            "items": {
+              "$ref": "#/components/schemas/Fact"
+            },
+            "maxItems": 100,
+            "title": "Facts",
+            "type": "array"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "updated_at": {
+            "format": "date-time",
+            "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}(\\.[0-9]{1,6})?Z$",
+            "title": "Updated At",
+            "type": "string"
+          },
+          "version_id": {
+            "format": "uuid",
+            "title": "Version Id",
+            "type": "string"
+          },
+          "version_number": {
+            "minimum": 1,
+            "title": "Version Number",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "id",
+          "version_id",
+          "version_number",
+          "facts",
+          "updated_at"
+        ],
+        "title": "Profile",
+        "type": "object"
+      },
+      "Provenance": {
+        "enum": [
+          "USER_CONFIRMED",
+          "USER_CONFIRMED_DOCUMENT",
+          "CONFLICTING"
+        ],
+        "title": "Provenance",
+        "type": "string"
+      },
+      "Readiness": {
+        "additionalProperties": false,
+        "properties": {
+          "completed": {
+            "minimum": 0,
+            "title": "Completed",
+            "type": "integer"
+          },
+          "percent": {
+            "anyOf": [
+              {
+                "maximum": 100,
+                "minimum": 0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Percent"
+          },
+          "required": {
+            "minimum": 0,
+            "title": "Required",
+            "type": "integer"
+          },
+          "unknown_applicability": {
+            "minimum": 0,
+            "title": "Unknown Applicability",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "completed",
+          "required",
+          "percent",
+          "unknown_applicability"
+        ],
+        "title": "Readiness",
+        "type": "object"
+      },
+      "ReasonCode": {
+        "enum": [
+          "MISSING_PROFILE_FACT",
+          "MISSING_SOURCE",
+          "SOURCE_CONFLICT",
+          "AMBIGUOUS_POLICY",
+          "UNSUPPORTED_RULE",
+          "STALE_EVIDENCE",
+          "EXTRACTION_INCOMPLETE",
+          "INCOMPATIBLE_SCALE",
+          "DATE_PRECISION_INSUFFICIENT",
+          "UNSUPPORTED_CLAIM",
+          "BUDGET_LIMIT",
+          "PROVIDER_FAILURE",
+          "INPUT_VERSION_CHANGED"
+        ],
+        "title": "ReasonCode",
+        "type": "string"
+      },
+      "ReferenceTime": {
+        "enum": [
+          "APPLICATION",
+          "PROGRAM_START",
+          "EXPLICIT"
+        ],
+        "title": "ReferenceTime",
+        "type": "string"
+      },
+      "RejectCandidate": {
+        "additionalProperties": false,
+        "properties": {
+          "action": {
+            "const": "REJECT",
+            "title": "Action",
+            "type": "string"
+          },
+          "candidate_id": {
+            "format": "uuid",
+            "title": "Candidate Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "candidate_id",
+          "action"
+        ],
+        "title": "RejectCandidate",
+        "type": "object"
+      },
+      "RequirementSet": {
+        "additionalProperties": false,
+        "properties": {
+          "application_tasks": {
+            "items": {
+              "$ref": "#/components/schemas/ApplicationTask"
+            },
+            "title": "Application Tasks",
+            "type": "array"
+          },
+          "completeness": {
+            "$ref": "#/components/schemas/Completeness"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "issues": {
+            "items": {
+              "maxLength": 80,
+              "minLength": 1,
+              "type": "string"
+            },
+            "title": "Issues",
+            "type": "array"
+          },
+          "mandatory_root": {
+            "anyOf": [
+              {
+                "minLength": 1,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Mandatory Root"
+          },
+          "nodes": {
+            "items": {
+              "discriminator": {
+                "mapping": {
+                  "ALL": "#/components/schemas/AllNode",
+                  "ANY": "#/components/schemas/AnyNode",
+                  "NOT": "#/components/schemas/NotNode",
+                  "PREDICATE": "#/components/schemas/PredicateNode"
+                },
+                "propertyName": "type"
+              },
+              "oneOf": [
+                {
+                  "$ref": "#/components/schemas/AllNode"
+                },
+                {
+                  "$ref": "#/components/schemas/AnyNode"
+                },
+                {
+                  "$ref": "#/components/schemas/NotNode"
+                },
+                {
+                  "$ref": "#/components/schemas/PredicateNode"
+                }
+              ]
+            },
+            "maxItems": 100,
+            "title": "Nodes",
+            "type": "array"
+          },
+          "opportunity_version_id": {
+            "format": "uuid",
+            "title": "Opportunity Version Id",
+            "type": "string"
+          },
+          "preferred_roots": {
+            "items": {
+              "minLength": 1,
+              "type": "string"
+            },
+            "title": "Preferred Roots",
+            "type": "array"
+          },
+          "schema_version": {
+            "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$",
+            "title": "Schema Version",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "opportunity_version_id",
+          "schema_version",
+          "completeness",
+          "mandatory_root",
+          "preferred_roots",
+          "nodes",
+          "application_tasks",
+          "issues"
+        ],
+        "title": "RequirementSet",
+        "type": "object"
+      },
+      "ResetDemo": {
+        "additionalProperties": false,
+        "properties": {
+          "scenario": {
+            "$ref": "#/components/schemas/DemoScenario"
+          }
+        },
+        "required": [
+          "scenario"
+        ],
+        "title": "ResetDemo",
+        "type": "object"
+      },
+      "ReviewFactCandidates": {
+        "additionalProperties": false,
+        "properties": {
+          "base_profile_version_id": {
+            "format": "uuid",
+            "title": "Base Profile Version Id",
+            "type": "string"
+          },
+          "decisions": {
+            "items": {
+              "discriminator": {
+                "mapping": {
+                  "ACCEPT": "#/components/schemas/AcceptCandidate",
+                  "CORRECT": "#/components/schemas/CorrectCandidate",
+                  "REJECT": "#/components/schemas/RejectCandidate"
+                },
+                "propertyName": "action"
+              },
+              "oneOf": [
+                {
+                  "$ref": "#/components/schemas/AcceptCandidate"
+                },
+                {
+                  "$ref": "#/components/schemas/RejectCandidate"
+                },
+                {
+                  "$ref": "#/components/schemas/CorrectCandidate"
+                }
+              ]
+            },
+            "maxItems": 50,
+            "minItems": 1,
+            "title": "Decisions",
+            "type": "array"
+          }
+        },
+        "required": [
+          "base_profile_version_id",
+          "decisions"
+        ],
+        "title": "ReviewFactCandidates",
+        "type": "object"
+      },
+      "RuleNode": {
+        "discriminator": {
+          "mapping": {
+            "ALL": "#/components/schemas/AllNode",
+            "ANY": "#/components/schemas/AnyNode",
+            "NOT": "#/components/schemas/NotNode",
+            "PREDICATE": "#/components/schemas/PredicateNode"
+          },
+          "propertyName": "type"
+        },
+        "oneOf": [
+          {
+            "$ref": "#/components/schemas/AllNode"
+          },
+          {
+            "$ref": "#/components/schemas/AnyNode"
+          },
+          {
+            "$ref": "#/components/schemas/NotNode"
+          },
+          {
+            "$ref": "#/components/schemas/PredicateNode"
+          }
+        ]
+      },
+      "RuleScope": {
+        "additionalProperties": false,
+        "properties": {
+          "cycle": {
+            "minLength": 1,
+            "title": "Cycle",
+            "type": "string"
+          },
+          "location_countries": {
+            "items": {
+              "enum": [
+                "AD",
+                "AE",
+                "AF",
+                "AG",
+                "AI",
+                "AL",
+                "AM",
+                "AO",
+                "AQ",
+                "AR",
+                "AS",
+                "AT",
+                "AU",
+                "AW",
+                "AX",
+                "AZ",
+                "BA",
+                "BB",
+                "BD",
+                "BE",
+                "BF",
+                "BG",
+                "BH",
+                "BI",
+                "BJ",
+                "BL",
+                "BM",
+                "BN",
+                "BO",
+                "BQ",
+                "BR",
+                "BS",
+                "BT",
+                "BV",
+                "BW",
+                "BY",
+                "BZ",
+                "CA",
+                "CC",
+                "CD",
+                "CF",
+                "CG",
+                "CH",
+                "CI",
+                "CK",
+                "CL",
+                "CM",
+                "CN",
+                "CO",
+                "CR",
+                "CU",
+                "CV",
+                "CW",
+                "CX",
+                "CY",
+                "CZ",
+                "DE",
+                "DJ",
+                "DK",
+                "DM",
+                "DO",
+                "DZ",
+                "EC",
+                "EE",
+                "EG",
+                "EH",
+                "ER",
+                "ES",
+                "ET",
+                "FI",
+                "FJ",
+                "FK",
+                "FM",
+                "FO",
+                "FR",
+                "GA",
+                "GB",
+                "GD",
+                "GE",
+                "GF",
+                "GG",
+                "GH",
+                "GI",
+                "GL",
+                "GM",
+                "GN",
+                "GP",
+                "GQ",
+                "GR",
+                "GS",
+                "GT",
+                "GU",
+                "GW",
+                "GY",
+                "HK",
+                "HM",
+                "HN",
+                "HR",
+                "HT",
+                "HU",
+                "ID",
+                "IE",
+                "IL",
+                "IM",
+                "IN",
+                "IO",
+                "IQ",
+                "IR",
+                "IS",
+                "IT",
+                "JE",
+                "JM",
+                "JO",
+                "JP",
+                "KE",
+                "KG",
+                "KH",
+                "KI",
+                "KM",
+                "KN",
+                "KP",
+                "KR",
+                "KW",
+                "KY",
+                "KZ",
+                "LA",
+                "LB",
+                "LC",
+                "LI",
+                "LK",
+                "LR",
+                "LS",
+                "LT",
+                "LU",
+                "LV",
+                "LY",
+                "MA",
+                "MC",
+                "MD",
+                "ME",
+                "MF",
+                "MG",
+                "MH",
+                "MK",
+                "ML",
+                "MM",
+                "MN",
+                "MO",
+                "MP",
+                "MQ",
+                "MR",
+                "MS",
+                "MT",
+                "MU",
+                "MV",
+                "MW",
+                "MX",
+                "MY",
+                "MZ",
+                "NA",
+                "NC",
+                "NE",
+                "NF",
+                "NG",
+                "NI",
+                "NL",
+                "NO",
+                "NP",
+                "NR",
+                "NU",
+                "NZ",
+                "OM",
+                "PA",
+                "PE",
+                "PF",
+                "PG",
+                "PH",
+                "PK",
+                "PL",
+                "PM",
+                "PN",
+                "PR",
+                "PS",
+                "PT",
+                "PW",
+                "PY",
+                "QA",
+                "RE",
+                "RO",
+                "RS",
+                "RU",
+                "RW",
+                "SA",
+                "SB",
+                "SC",
+                "SD",
+                "SE",
+                "SG",
+                "SH",
+                "SI",
+                "SJ",
+                "SK",
+                "SL",
+                "SM",
+                "SN",
+                "SO",
+                "SR",
+                "SS",
+                "ST",
+                "SV",
+                "SX",
+                "SY",
+                "SZ",
+                "TC",
+                "TD",
+                "TF",
+                "TG",
+                "TH",
+                "TJ",
+                "TK",
+                "TL",
+                "TM",
+                "TN",
+                "TO",
+                "TR",
+                "TT",
+                "TV",
+                "TW",
+                "TZ",
+                "UA",
+                "UG",
+                "UM",
+                "US",
+                "UY",
+                "UZ",
+                "VA",
+                "VC",
+                "VE",
+                "VG",
+                "VI",
+                "VN",
+                "VU",
+                "WF",
+                "WS",
+                "YE",
+                "YT",
+                "ZA",
+                "ZM",
+                "ZW"
+              ],
+              "type": "string"
+            },
+            "title": "Location Countries",
+            "type": "array"
+          }
+        },
+        "required": [
+          "cycle",
+          "location_countries"
+        ],
+        "title": "RuleScope",
+        "type": "object"
+      },
+      "Run": {
+        "additionalProperties": false,
+        "properties": {
+          "cancel_requested": {
+            "title": "Cancel Requested",
+            "type": "boolean"
+          },
+          "created_at": {
+            "format": "date-time",
+            "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}(\\.[0-9]{1,6})?Z$",
+            "title": "Created At",
+            "type": "string"
+          },
+          "failure_code": {
+            "anyOf": [
+              {
+                "minLength": 1,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Failure Code"
+          },
+          "funnel": {
+            "$ref": "#/components/schemas/RunFunnel"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "kind": {
+            "$ref": "#/components/schemas/RunKind"
+          },
+          "profile_version_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Profile Version Id"
+          },
+          "progress": {
+            "$ref": "#/components/schemas/RunProgress"
+          },
+          "result_refs": {
+            "$ref": "#/components/schemas/RunResultRefs"
+          },
+          "stage": {
+            "minLength": 1,
+            "title": "Stage",
+            "type": "string"
+          },
+          "status": {
+            "$ref": "#/components/schemas/RunStatus"
+          },
+          "updated_at": {
+            "format": "date-time",
+            "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}(\\.[0-9]{1,6})?Z$",
+            "title": "Updated At",
+            "type": "string"
+          },
+          "warnings": {
+            "items": {
+              "minLength": 1,
+              "type": "string"
+            },
+            "title": "Warnings",
+            "type": "array"
+          }
+        },
+        "required": [
+          "id",
+          "kind",
+          "status",
+          "stage",
+          "profile_version_id",
+          "cancel_requested",
+          "progress",
+          "funnel",
+          "result_refs",
+          "warnings",
+          "failure_code",
+          "created_at",
+          "updated_at"
+        ],
+        "title": "Run",
+        "type": "object"
+      },
+      "RunEvent": {
+        "additionalProperties": false,
+        "properties": {
+          "artifact_ref": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ArtifactRef"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "at": {
+            "format": "date-time",
+            "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}(\\.[0-9]{1,6})?Z$",
+            "title": "At",
+            "type": "string"
+          },
+          "message_code": {
+            "minLength": 1,
+            "title": "Message Code",
+            "type": "string"
+          },
+          "run_id": {
+            "format": "uuid",
+            "title": "Run Id",
+            "type": "string"
+          },
+          "seq": {
+            "minimum": 0,
+            "title": "Seq",
+            "type": "integer"
+          },
+          "stage": {
+            "minLength": 1,
+            "title": "Stage",
+            "type": "string"
+          },
+          "status": {
+            "$ref": "#/components/schemas/RunStatus"
+          }
+        },
+        "required": [
+          "run_id",
+          "seq",
+          "stage",
+          "status",
+          "message_code",
+          "artifact_ref",
+          "at"
+        ],
+        "title": "RunEvent",
+        "type": "object"
+      },
+      "RunFunnel": {
+        "additionalProperties": false,
+        "properties": {
+          "canonical": {
+            "minimum": 0,
+            "title": "Canonical",
+            "type": "integer"
+          },
+          "evaluated": {
+            "minimum": 0,
+            "title": "Evaluated",
+            "type": "integer"
+          },
+          "official": {
+            "minimum": 0,
+            "title": "Official",
+            "type": "integer"
+          },
+          "parsed": {
+            "minimum": 0,
+            "title": "Parsed",
+            "type": "integer"
+          },
+          "raw_hits": {
+            "minimum": 0,
+            "title": "Raw Hits",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "raw_hits",
+          "canonical",
+          "official",
+          "parsed",
+          "evaluated"
+        ],
+        "title": "RunFunnel",
+        "type": "object"
+      },
+      "RunKind": {
+        "enum": [
+          "DOCUMENT_PARSE",
+          "DISCOVERY",
+          "IMPORT",
+          "EVALUATE",
+          "DRAFT_GENERATE",
+          "DRAFT_VALIDATE",
+          "REFRESH",
+          "DOCUMENT_DELETE",
+          "ACCOUNT_DELETE",
+          "DEMO_RESET"
+        ],
+        "title": "RunKind",
+        "type": "string"
+      },
+      "RunProgress": {
+        "additionalProperties": false,
+        "properties": {
+          "completed_units": {
+            "minimum": 0,
+            "title": "Completed Units",
+            "type": "integer"
+          },
+          "total_units": {
+            "anyOf": [
+              {
+                "minimum": 0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Total Units"
+          }
+        },
+        "required": [
+          "completed_units",
+          "total_units"
+        ],
+        "title": "RunProgress",
+        "type": "object"
+      },
+      "RunReceipt": {
+        "additionalProperties": false,
+        "properties": {
+          "events_url": {
+            "minLength": 1,
+            "title": "Events Url",
+            "type": "string"
+          },
+          "run_id": {
+            "format": "uuid",
+            "title": "Run Id",
+            "type": "string"
+          },
+          "status": {
+            "const": "QUEUED",
+            "title": "Status",
+            "type": "string"
+          },
+          "status_url": {
+            "minLength": 1,
+            "title": "Status Url",
+            "type": "string"
+          }
+        },
+        "required": [
+          "run_id",
+          "status",
+          "status_url",
+          "events_url"
+        ],
+        "title": "RunReceipt",
+        "type": "object"
+      },
+      "RunResultRefs": {
+        "additionalProperties": false,
+        "properties": {
+          "draft_ids": {
+            "items": {
+              "format": "uuid",
+              "type": "string"
+            },
+            "title": "Draft Ids",
+            "type": "array",
+            "uniqueItems": true
+          },
+          "evaluation_ids": {
+            "items": {
+              "format": "uuid",
+              "type": "string"
+            },
+            "title": "Evaluation Ids",
+            "type": "array",
+            "uniqueItems": true
+          },
+          "opportunity_ids": {
+            "items": {
+              "format": "uuid",
+              "type": "string"
+            },
+            "title": "Opportunity Ids",
+            "type": "array",
+            "uniqueItems": true
+          }
+        },
+        "required": [
+          "opportunity_ids",
+          "evaluation_ids",
+          "draft_ids"
+        ],
+        "title": "RunResultRefs",
+        "type": "object"
+      },
+      "RunStatus": {
+        "enum": [
+          "QUEUED",
+          "RUNNING",
+          "WAITING_USER",
+          "SUCCEEDED",
+          "PARTIAL",
+          "FAILED",
+          "CANCELLED"
+        ],
+        "title": "RunStatus",
+        "type": "string"
+      },
+      "Saved": {
+        "additionalProperties": false,
+        "properties": {
+          "current_evaluation_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Current Evaluation Id"
+          },
+          "evaluation_state": {
+            "$ref": "#/components/schemas/EvaluationState"
+          },
+          "opportunity_id": {
+            "format": "uuid",
+            "title": "Opportunity Id",
+            "type": "string"
+          },
+          "saved_at": {
+            "format": "date-time",
+            "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}(\\.[0-9]{1,6})?Z$",
+            "title": "Saved At",
+            "type": "string"
+          }
+        },
+        "required": [
+          "opportunity_id",
+          "saved_at",
+          "current_evaluation_id",
+          "evaluation_state"
+        ],
+        "title": "Saved",
+        "type": "object"
+      },
+      "Source": {
+        "additionalProperties": false,
+        "properties": {
+          "authority": {
+            "$ref": "#/components/schemas/Authority"
+          },
+          "completeness": {
+            "$ref": "#/components/schemas/Completeness"
+          },
+          "content_hash": {
+            "pattern": "^[0-9a-f]{64}$",
+            "title": "Content Hash",
+            "type": "string"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "retrieved_at": {
+            "format": "date-time",
+            "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}(\\.[0-9]{1,6})?Z$",
+            "title": "Retrieved At",
+            "type": "string"
+          },
+          "snapshot_id": {
+            "format": "uuid",
+            "title": "Snapshot Id",
+            "type": "string"
+          },
+          "spans": {
+            "items": {
+              "$ref": "#/components/schemas/SourceSpan"
+            },
+            "title": "Spans",
+            "type": "array"
+          },
+          "url": {
+            "minLength": 1,
+            "title": "Url",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "url",
+          "snapshot_id",
+          "retrieved_at",
+          "content_hash",
+          "authority",
+          "completeness",
+          "spans"
+        ],
+        "title": "Source",
+        "type": "object"
+      },
+      "SourceSpan": {
+        "additionalProperties": false,
+        "properties": {
+          "end": {
+            "minimum": 0,
+            "title": "End",
+            "type": "integer"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "page": {
+            "anyOf": [
+              {
+                "minimum": 1,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Page"
+          },
+          "quote": {
+            "minLength": 1,
+            "title": "Quote",
+            "type": "string"
+          },
+          "start": {
+            "minimum": 0,
+            "title": "Start",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "id",
+          "page",
+          "start",
+          "end",
+          "quote"
+        ],
+        "title": "SourceSpan",
+        "type": "object"
+      },
+      "StartDiscovery": {
+        "additionalProperties": false,
+        "properties": {
+          "goal": {
+            "maxLength": 1000,
+            "minLength": 20,
+            "title": "Goal",
+            "type": "string"
+          },
+          "lane": {
+            "$ref": "#/components/schemas/Lane"
+          },
+          "preferences": {
+            "$ref": "#/components/schemas/DiscoveryPreferences"
+          },
+          "profile_version_id": {
+            "format": "uuid",
+            "title": "Profile Version Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "profile_version_id",
+          "goal",
+          "lane",
+          "preferences"
+        ],
+        "title": "StartDiscovery",
+        "type": "object"
+      },
+      "StartDraft": {
+        "additionalProperties": false,
+        "properties": {
+          "base_revision": {
+            "minimum": 1,
+            "title": "Base Revision",
+            "type": "integer"
+          },
+          "target_words": {
+            "maximum": 500,
+            "minimum": 150,
+            "title": "Target Words",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "base_revision",
+          "target_words"
+        ],
+        "title": "StartDraft",
+        "type": "object"
+      },
+      "StartEvaluation": {
+        "additionalProperties": false,
+        "properties": {
+          "opportunity_version_id": {
+            "format": "uuid",
+            "title": "Opportunity Version Id",
+            "type": "string"
+          },
+          "profile_version_id": {
+            "format": "uuid",
+            "title": "Profile Version Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "opportunity_version_id",
+          "profile_version_id"
+        ],
+        "title": "StartEvaluation",
+        "type": "object"
+      },
+      "StringSetValue": {
+        "additionalProperties": false,
+        "properties": {
+          "type": {
+            "const": "STRING_SET",
+            "title": "Type",
+            "type": "string"
+          },
+          "values": {
+            "items": {
+              "maxLength": 80,
+              "minLength": 1,
+              "type": "string"
+            },
+            "maxItems": 50,
+            "title": "Values",
+            "type": "array",
+            "uniqueItems": true
+          }
+        },
+        "required": [
+          "type",
+          "values"
+        ],
+        "title": "StringSetValue",
+        "type": "object"
+      },
+      "StringValue": {
+        "additionalProperties": false,
+        "properties": {
+          "type": {
+            "const": "STRING",
+            "title": "Type",
+            "type": "string"
+          },
+          "value": {
+            "maxLength": 500,
+            "minLength": 1,
+            "title": "Value",
+            "type": "string"
+          }
+        },
+        "required": [
+          "type",
+          "value"
+        ],
+        "title": "StringValue",
+        "type": "object"
+      },
+      "TaskKind": {
+        "enum": [
+          "DOCUMENT",
+          "TASK",
+          "STATEMENT"
+        ],
+        "title": "TaskKind",
+        "type": "string"
+      },
+      "Truth": {
+        "enum": [
+          "TRUE",
+          "FALSE",
+          "UNKNOWN"
+        ],
+        "title": "Truth",
+        "type": "string"
+      },
+      "UnknownReason": {
+        "enum": [
+          "USER_UNSURE",
+          "NOT_PROVIDED",
+          "CONFLICTING_EVIDENCE"
+        ],
+        "title": "UnknownReason",
+        "type": "string"
+      },
+      "UnknownValue": {
+        "additionalProperties": false,
+        "properties": {
+          "reason": {
+            "$ref": "#/components/schemas/UnknownReason"
+          },
+          "type": {
+            "const": "UNKNOWN",
+            "title": "Type",
+            "type": "string"
+          }
+        },
+        "required": [
+          "type",
+          "reason"
+        ],
+        "title": "UnknownValue",
+        "type": "object"
+      },
+      "UploadIntent": {
+        "additionalProperties": false,
+        "properties": {
+          "document_id": {
+            "format": "uuid",
+            "title": "Document Id",
+            "type": "string"
+          },
+          "expires_at": {
+            "format": "date-time",
+            "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}(\\.[0-9]{1,6})?Z$",
+            "title": "Expires At",
+            "type": "string"
+          },
+          "max_bytes": {
+            "minimum": 1,
+            "title": "Max Bytes",
+            "type": "integer"
+          },
+          "upload_method": {
+            "const": "PUT",
+            "title": "Upload Method",
+            "type": "string"
+          },
+          "upload_url": {
+            "minLength": 1,
+            "title": "Upload Url",
+            "type": "string"
+          }
+        },
+        "required": [
+          "document_id",
+          "upload_url",
+          "upload_method",
+          "expires_at",
+          "max_bytes"
+        ],
+        "title": "UploadIntent",
+        "type": "object"
+      },
+      "Usage": {
+        "additionalProperties": false,
+        "properties": {
+          "active_run_limit": {
+            "minimum": 0,
+            "title": "Active Run Limit",
+            "type": "integer"
+          },
+          "active_runs": {
+            "minimum": 0,
+            "title": "Active Runs",
+            "type": "integer"
+          },
+          "currency": {
+            "const": "USD",
+            "title": "Currency",
+            "type": "string"
+          },
+          "limit_microusd": {
+            "minimum": 0,
+            "title": "Limit Microusd",
+            "type": "integer"
+          },
+          "period_end": {
+            "format": "date-time",
+            "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}(\\.[0-9]{1,6})?Z$",
+            "title": "Period End",
+            "type": "string"
+          },
+          "period_start": {
+            "format": "date-time",
+            "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}(\\.[0-9]{1,6})?Z$",
+            "title": "Period Start",
+            "type": "string"
+          },
+          "reserved_microusd": {
+            "minimum": 0,
+            "title": "Reserved Microusd",
+            "type": "integer"
+          },
+          "spent_microusd": {
+            "minimum": 0,
+            "title": "Spent Microusd",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "period_start",
+          "period_end",
+          "currency",
+          "spent_microusd",
+          "reserved_microusd",
+          "limit_microusd",
+          "active_runs",
+          "active_run_limit"
+        ],
+        "title": "Usage",
+        "type": "object"
+      },
+      "Watch": {
+        "additionalProperties": false,
+        "properties": {
+          "enabled": {
+            "title": "Enabled",
+            "type": "boolean"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "interval_hours": {
+            "enum": [
+              24,
+              72
+            ],
+            "title": "Interval Hours",
+            "type": "integer"
+          },
+          "next_due_at": {
+            "format": "date-time",
+            "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}(\\.[0-9]{1,6})?Z$",
+            "title": "Next Due At",
+            "type": "string"
+          },
+          "opportunity_id": {
+            "format": "uuid",
+            "title": "Opportunity Id",
+            "type": "string"
+          },
+          "revision": {
+            "minimum": 1,
+            "title": "Revision",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "id",
+          "opportunity_id",
+          "revision",
+          "enabled",
+          "interval_hours",
+          "next_due_at"
+        ],
+        "title": "Watch",
+        "type": "object"
+      }
+    }
+  },
+  "info": {
+    "title": "BenefitBridge",
+    "version": "1.0.0"
+  },
+  "openapi": "3.1.0",
+  "paths": {}
+}
