@@ -494,4 +494,4 @@ def test_sources_migration_downgrade_and_reupgrade(database):
         command.downgrade(config, "0001_identity")
         assert connection.scalar(text("SELECT to_regclass('public.sources')")) is None
         command.upgrade(config, "head")
-        assert connection.scalar(text("SELECT version_num FROM alembic_version")) == "0002_sources"
+        assert connection.scalar(text("SELECT version_num FROM alembic_version")) == "0003_jobs"

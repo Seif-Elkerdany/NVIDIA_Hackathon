@@ -11,11 +11,12 @@ from alembic.script import ScriptDirectory
 ROOT = Path(__file__).resolve().parents[2]
 
 
-def test_migration_chain_has_one_sources_head():
+def test_migration_chain_has_one_jobs_head():
     scripts = ScriptDirectory.from_config(Config(str(ROOT / "alembic.ini")))
-    assert scripts.get_heads() == ["0002_sources"]
+    assert scripts.get_heads() == ["0003_jobs"]
     assert scripts.get_revision("0001_identity").down_revision is None
     assert scripts.get_revision("0002_sources").down_revision == "0001_identity"
+    assert scripts.get_revision("0003_jobs").down_revision == "0002_sources"
 
 
 def test_missing_database_configuration_fails_without_connecting():
