@@ -23,6 +23,11 @@ exist. MS-002/003 ports and schemas are reused, without editing their contracts.
   cleared supplementary groups and no privilege escalation. Isolation failure
   is a failure, covering Node and subprocesses as well as Python. Dependency/tool
   downloads happen before test isolation; no provider credentials are configured.
+  Integration gates use the same pinned PostgreSQL 17 image as development, with
+  `--network none`, TCP listening disabled and an authenticated filesystem Unix
+  socket shared with the runner. `BB_TEST_DB_URL` selects that socket, which stays
+  accessible inside the offline namespace. The disposable container and its data
+  volume are removed even when a gate fails.
 
 The root Python guard runs before test collection and denies external DNS,
 TCP connect/connect_ex and UDP sendto. Numeric loopback remains available for
