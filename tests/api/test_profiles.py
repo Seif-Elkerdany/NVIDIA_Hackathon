@@ -18,6 +18,20 @@ account_client = accounts.account_client
 evidence = docs.evidence
 
 
+def test_openapi_marks_patch_idempotency_key_required():
+    from benefitbridge.main import create_app
+
+    operation = create_app(Settings(_env_file=None)).openapi()["paths"]["/api/v1/profile"]["patch"]
+    assert operation["parameters"] == [
+        {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": True,
+            "schema": {"type": "string", "minLength": 16, "maxLength": 128, "pattern": "^[!-~]+$"},
+        }
+    ]
+
+
 def test_profile_production_requires_private_invalidation_handler():
     from fastapi import FastAPI
     from fastapi.testclient import TestClient
