@@ -39,10 +39,11 @@ def verify(base_url: str) -> None:
         assert page.evaluate("document.activeElement.textContent") == "Skip to content"
         page.keyboard.press("Enter")
         assert page.evaluate("document.activeElement.id") == "main-content"
-        page.get_by_role("link", name="Profile", exact=True).click()
+        page.get_by_role("link", name="Settings", exact=True).click()
+        page.get_by_role("heading", name="Your service connection").wait_for()
         assert page.evaluate("document.activeElement.tagName") == "H1"
         assert (
-            page.get_by_role("link", name="Profile", exact=True).get_attribute("aria-current")
+            page.get_by_role("link", name="Settings", exact=True).get_attribute("aria-current")
             == "page"
         )
         page.go_back()

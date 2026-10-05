@@ -47,5 +47,8 @@ def test_frontend_lock_and_strict_typescript_configuration():
     for group in ("dependencies", "devDependencies"):
         for name, version in package[group].items():
             assert lock["importers"]["."][group][name]["specifier"] == version
-    assert "--strict" in package["scripts"]["typecheck"]
+    typescript = json.loads((ROOT / "frontend/tsconfig.json").read_text(encoding="utf-8"))
+    assert "--project tsconfig.json" in package["scripts"]["typecheck"]
+    assert typescript["compilerOptions"]["strict"] is True
+    assert "src" in typescript["include"]
     assert package["private"] is True

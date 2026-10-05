@@ -16,6 +16,12 @@ import {
 import { ApiError, decodeCapabilities, type ApiClient } from "../lib/api";
 import { ErrorView, StateView } from "../components/StateView";
 import { StatusLabel } from "../components/StatusLabel";
+import { AuthBoundary, type AuthRuntime } from "../features/auth/AuthContext";
+import {
+  AccountScreen,
+  ConsentScreen,
+  ProcessingGuard,
+} from "../features/auth/Screens";
 import "../styles/shell.css";
 
 const ApiContext = createContext<ApiClient | null>(null);
@@ -283,16 +289,6 @@ function Overview() {
 }
 
 const shells = {
-  account: [
-    "Account",
-    "Connect your account",
-    "Account sign-in is not available from the connected service yet. Your workspace has not been authenticated.",
-  ],
-  consent: [
-    "Consent",
-    "Choose how your information is used",
-    "Processing consent cannot be recorded until your account and the consent service are available.",
-  ],
   profile: [
     "Profile",
     "Your background and goal",
@@ -322,19 +318,14 @@ const shells = {
 
 function RouteShell({ page }: { page: keyof typeof shells }) {
   const [eyebrow, title, description] = shells[page];
-  const unavailable = page === "account" || page === "consent";
   return (
     <>
       <PageHeading eyebrow={eyebrow} title={title}>
         {description}
       </PageHeading>
       <StateView
-        state={unavailable ? "unavailable" : "empty"}
-        title={
-          unavailable
-            ? "This service is not available yet"
-            : "Nothing loaded yet"
-        }
+        state="empty"
+        title="Nothing loaded yet"
         action={
           <Link
             className="button button--secondary"
@@ -351,9 +342,7 @@ function RouteShell({ page }: { page: keyof typeof shells }) {
         }
       >
         <p>
-          {unavailable
-            ? "Check the service connection before continuing."
-            : "This view will show your account data when its service is available."}
+          This view will show your account data when its service is available.
         </p>
       </StateView>
     </>
@@ -395,11 +384,19 @@ export function ShellRoutes() {
         <main id="main-content" tabIndex={-1}>
           <Routes>
             <Route path="/" element={<Overview />} />
+            <Route path="/account" element={<AccountScreen />} />
+            <Route path="/account/confirm" element={<AccountScreen />} />
+            <Route path="/account/recovery" element={<AccountScreen />} />
+            <Route path="/consent" element={<ConsentScreen />} />
             {Object.keys(shells).map((page) => (
               <Route
                 key={page}
                 path={`/${page}`}
-                element={<RouteShell page={page as keyof typeof shells} />}
+                element={
+                  <ProcessingGuard>
+                    <RouteShell page={page as keyof typeof shells} />
+                  </ProcessingGuard>
+                }
               />
             ))}
             <Route path="/settings" element={<Settings />} />
@@ -430,7 +427,13 @@ export function ShellRoutes() {
   );
 }
 
-export function App({ api }: { api: ApiClient }) {
+export function App({
+  api,
+  auth = null,
+}: {
+  api: ApiClient;
+  auth?: AuthRuntime | null;
+}) {
   const [queryClient] = useState(
     () =>
       new QueryClient({
@@ -443,9 +446,11 @@ export function App({ api }: { api: ApiClient }) {
   return (
     <ApiContext.Provider value={api}>
       <QueryClientProvider client={queryClient}>
-        <BrowserRouter>
-          <ShellRoutes />
-        </BrowserRouter>
+        <AuthBoundary runtime={auth}>
+          <BrowserRouter>
+            <ShellRoutes />
+          </BrowserRouter>
+        </AuthBoundary>
       </QueryClientProvider>
     </ApiContext.Provider>
   );

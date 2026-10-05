@@ -16,11 +16,12 @@
   "scripts": {
     "dev": "vite --config src/app/vite.config.ts --host 127.0.0.1",
     "build": "vite build --config src/app/vite.config.ts",
-    "lint": "prettier --check package.json index.html src/app src/components src/lib/api.ts src/styles tests && pnpm typecheck",
-    "typecheck": "tsc --noEmit --strict --noUnusedLocals --noUnusedParameters --target ES2022 --module ESNext --moduleResolution bundler --jsx react-jsx --lib ES2022,DOM,DOM.Iterable src/app/main.tsx src/app/vite.config.ts tests/scaffold.tsx tests/domain.test.ts tests/mockTransport.ts tests/state-fixture.tsx",
-    "test": "node --experimental-strip-types --test tests/scaffold.test.mjs tests/api.test.mjs"
+    "lint": "prettier --check package.json tsconfig.json index.html src/app src/components src/features src/lib/api.ts src/styles tests && pnpm typecheck",
+    "typecheck": "tsc --project tsconfig.json",
+    "test": "node --experimental-strip-types --test tests/scaffold.test.mjs tests/api.test.mjs tests/auth.test.mjs"
   },
   "dependencies": {
+    "@supabase/supabase-js": "2.117.2",
     "@tanstack/react-query": "5.104.1",
     "react": "19.3.0",
     "react-dom": "19.3.0",

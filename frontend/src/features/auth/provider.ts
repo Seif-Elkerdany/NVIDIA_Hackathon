@@ -91,18 +91,17 @@ export function createAuthProvider(config: AuthConfig): AuthProvider {
       return startPromise;
     },
     async login(email, password) {
-      blocked = false;
       recovery = false;
       const { data, error } = await client.auth.signInWithPassword({
         email,
         password,
       });
       if (error || !data.session) throw new AuthFailure();
+      blocked = false;
       accept(data.session);
       client.auth.startAutoRefresh();
     },
     async signup(email, password) {
-      blocked = false;
       recovery = false;
       const { data, error } = await client.auth.signUp({
         email,
@@ -110,6 +109,7 @@ export function createAuthProvider(config: AuthConfig): AuthProvider {
         options: { emailRedirectTo: `${config.origin}/account/confirm` },
       });
       if (error) throw new AuthFailure();
+      blocked = false;
       accept(data.session);
       if (data.session) client.auth.startAutoRefresh();
       return data.session !== null;
@@ -132,6 +132,7 @@ export function createAuthProvider(config: AuthConfig): AuthProvider {
       blocked = true;
       recovery = false;
       sessions.replace(null);
+      client.auth.stopAutoRefresh();
       const { error } = await client.auth.signOut({ scope: "local" });
       memory.clear();
       if (error) throw new AuthFailure();

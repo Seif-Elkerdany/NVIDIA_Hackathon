@@ -122,10 +122,17 @@ export function useAccount() {
     enabled: !!runtime && ready && !!state.subject && !state.recovery,
     queryFn: async ({ signal }) => {
       if (!runtime) throw new Error("Auth is not configured.");
+      const token = runtime.provider.sessions.token();
       try {
         return await runtime.api.get("/api/v1/me", decodeAccount, signal);
       } catch (error: unknown) {
-        if (error instanceof ApiError && error.status === 401)
+        if (
+          error instanceof ApiError &&
+          error.status === 401 &&
+          token !== null &&
+          runtime.provider.sessions.token() === token &&
+          runtime.provider.sessions.snapshot().generation === state.generation
+        )
           runtime.provider.sessions.replace(null, true);
         throw error;
       }

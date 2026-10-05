@@ -268,12 +268,17 @@ export function ConsentScreen() {
     mutationFn: async () => {
       if (!auth.runtime || !checked || !auth.state.subject)
         throw new AuthFailure();
-      return auth.runtime.acceptConsent({
+      const generation = auth.runtime.provider.sessions.snapshot().generation;
+      const account = await auth.runtime.acceptConsent({
         consent_version: auth.runtime.config.noticeVersion,
       });
+      return { account, generation };
     },
-    onSuccess(data) {
-      queryClient.setQueryData(["auth-account", auth.state.generation], data);
+    onSuccess({ account, generation }) {
+      // A late consent response belongs only to the session that submitted it.
+      if (auth.runtime?.provider.sessions.snapshot().generation !== generation)
+        return;
+      queryClient.setQueryData(["auth-account", generation], account);
       auth.accepted();
     },
   });

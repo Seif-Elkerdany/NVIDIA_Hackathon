@@ -107,6 +107,68 @@ test("production refuses mocks and insecure origins", () => {
   );
 });
 
+test("consent PATCH uses the shared bearer transport and generated request shape", async () => {
+  const consent = { consent_version: "2026-10-01" };
+  const api = client(
+    async (request) => {
+      assert.equal(request.method, "PATCH");
+      assert.equal(request.url, "https://synthetic.invalid/api/v1/me");
+      assert.equal(
+        request.headers.get("Authorization"),
+        "Bearer synthetic-token",
+      );
+      assert.equal(request.headers.get("Content-Type"), "application/json");
+      assert.equal(request.cache, "no-store");
+      assert.deepEqual(await request.json(), consent);
+      return response({ data: consent, request_id: "synthetic-response" });
+    },
+    { getAccessToken: () => "synthetic-token" },
+  );
+  assert.deepEqual(
+    await api.patch("/api/v1/me", consent, (data) => data),
+    consent,
+  );
+});
+
+test("a current bearer 401 ends the session even when its body is invalid", async () => {
+  let token = "synthetic-token";
+  let expired = 0;
+  const api = client(async () => new Response("unreadable", { status: 401 }), {
+    getAccessToken: () => token,
+    onUnauthorized: () => {
+      token = null;
+      expired++;
+    },
+  });
+  await assert.rejects(
+    api.get("/api/v1/me", (data) => data),
+    ApiError,
+  );
+  assert.equal(expired, 1);
+  assert.equal(token, null);
+});
+
+test("an old bearer 401 cannot end a newer session", async () => {
+  let token = "old-synthetic-token";
+  let expired = 0;
+  const api = client(
+    async () => {
+      token = "new-synthetic-token";
+      return response({}, 401);
+    },
+    {
+      getAccessToken: () => token,
+      onUnauthorized: () => expired++,
+    },
+  );
+  await assert.rejects(
+    api.get("/api/v1/me", (data) => data),
+    ApiError,
+  );
+  assert.equal(expired, 0);
+  assert.equal(token, "new-synthetic-token");
+});
+
 test("structured problems preserve field errors and safe request reference", async () => {
   await assert.rejects(
     client(async () => response(problem, 422, "application/problem+json")).get(

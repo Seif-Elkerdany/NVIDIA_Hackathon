@@ -1,4 +1,4 @@
-import type { components } from "../generated/api";
+import type { components, operations } from "../generated/api";
 
 export type Problem = components["schemas"]["Problem"];
 export type Capabilities = components["schemas"]["Capabilities"];
@@ -102,12 +102,19 @@ export function decodeCapabilities(value: unknown): Capabilities {
 
 export interface ApiClient {
   get<T>(path: ApiPath, decode: Decoder<T>, signal?: AbortSignal): Promise<T>;
+  patch<T>(
+    path: "/api/v1/me",
+    body: operations["patch_me"]["requestBody"]["content"]["application/json"],
+    decode: Decoder<T>,
+    signal?: AbortSignal,
+  ): Promise<T>;
 }
 
 export interface ApiClientOptions {
   origin: string;
   environment?: "production" | "development" | "test";
   getAccessToken?: () => string | null;
+  onUnauthorized?: () => void;
   transport?: HttpTransport;
   newRequestId?: () => string;
   timeoutMs?: number;
@@ -148,105 +155,90 @@ export function createApiClient(options: ApiClientOptions): ApiClient {
     options.transport ?? ((request) => fetch(request));
   const newRequestId = options.newRequestId ?? (() => crypto.randomUUID());
 
-  return {
-    async get<T>(
-      path: ApiPath,
-      decode: Decoder<T>,
-      signal?: AbortSignal,
-    ): Promise<T> {
-      const url = new URL(path, origin);
-      if (
-        url.origin !== origin.origin ||
-        !url.pathname.startsWith("/api/v1/") ||
-        url.hash
-      ) {
-        throw new Error(
-          "Requests must remain on the configured API origin and prefix.",
-        );
-      }
-      const id = newRequestId();
-      if (!requestId(id)) throw new Error("Invalid request ID.");
-      const timeout = AbortSignal.timeout(timeoutMs);
-      const combined = signal ? AbortSignal.any([signal, timeout]) : timeout;
-      const headers = new Headers({
-        Accept: "application/json, application/problem+json",
-        "X-Request-ID": id,
-      });
-      const token = options.getAccessToken?.();
-      if (token) headers.set("Authorization", `Bearer ${token}`);
-      let response: Response;
-      try {
-        response = await transport(
-          new Request(url, {
-            method: "GET",
-            headers,
-            signal: combined,
-            credentials: "omit",
-            cache: "no-store",
-            redirect: "error",
-          }),
-        );
-      } catch (error: unknown) {
-        if (signal?.aborted)
-          throw new DOMException("Browser request cancelled.", "AbortError");
-        if (timeout.aborted)
-          throw new ApiError(
-            "timeout",
-            "The request timed out. Try again.",
-            id,
-          );
-        if (error instanceof TypeError) {
-          throw new ApiError(
-            "network",
-            "Could not connect. Check your connection and try again.",
-            id,
-          );
-        }
-        throw error;
-      }
-      const returnedId = response.headers.get("X-Request-ID");
-      const safeId = requestId(returnedId) ? returnedId : id;
-      const mediaType = response.headers
-        .get("Content-Type")
-        ?.split(";", 1)[0]
-        ?.trim();
-      if (
-        mediaType !== "application/json" &&
-        mediaType !== "application/problem+json"
-      ) {
+  async function request<T>(
+    method: "GET" | "PATCH",
+    path: ApiPath,
+    decode: Decoder<T>,
+    signal?: AbortSignal,
+    body?: operations["patch_me"]["requestBody"]["content"]["application/json"],
+  ): Promise<T> {
+    const url = new URL(path, origin);
+    if (
+      url.origin !== origin.origin ||
+      !url.pathname.startsWith("/api/v1/") ||
+      url.hash
+    ) {
+      throw new Error(
+        "Requests must remain on the configured API origin and prefix.",
+      );
+    }
+    const id = newRequestId();
+    if (!requestId(id)) throw new Error("Invalid request ID.");
+    const timeout = AbortSignal.timeout(timeoutMs);
+    const combined = signal ? AbortSignal.any([signal, timeout]) : timeout;
+    const headers = new Headers({
+      Accept: "application/json, application/problem+json",
+      "X-Request-ID": id,
+    });
+    const token = options.getAccessToken?.();
+    if (token) headers.set("Authorization", `Bearer ${token}`);
+    if (body) headers.set("Content-Type", "application/json");
+    let response: Response;
+    try {
+      response = await transport(
+        new Request(url, {
+          method,
+          body: body ? JSON.stringify(body) : undefined,
+          headers,
+          signal: combined,
+          credentials: "omit",
+          cache: "no-store",
+          redirect: "error",
+        }),
+      );
+    } catch (error: unknown) {
+      if (signal?.aborted)
+        throw new DOMException("Browser request cancelled.", "AbortError");
+      if (timeout.aborted)
+        throw new ApiError("timeout", "The request timed out. Try again.", id);
+      if (error instanceof TypeError) {
         throw new ApiError(
-          "invalid-response",
-          "The service returned an unexpected response. Try again.",
-          safeId,
-          response.status,
+          "network",
+          "Could not connect. Check your connection and try again.",
+          id,
         );
       }
-      let payload: unknown;
-      try {
-        payload = await response.json();
-      } catch (error: unknown) {
-        if (signal?.aborted)
-          throw new DOMException("Browser request cancelled.", "AbortError");
-        if (timeout.aborted)
-          throw new ApiError(
-            "timeout",
-            "The request timed out. Try again.",
-            safeId,
-          );
-        if (error instanceof TypeError)
-          throw new ApiError(
-            "network",
-            "The connection was interrupted. Try again.",
-            safeId,
-          );
-        if (!(error instanceof SyntaxError)) throw error;
-        throw new ApiError(
-          "invalid-response",
-          "The service returned an unreadable response. Try again.",
-          safeId,
-          response.status,
-        );
-      }
+      throw error;
+    }
+    // A delayed response from an old token must not end a newer session.
+    if (
+      response.status === 401 &&
+      token &&
+      options.getAccessToken?.() === token
+    ) {
+      options.onUnauthorized?.();
+    }
+    const returnedId = response.headers.get("X-Request-ID");
+    const safeId = requestId(returnedId) ? returnedId : id;
+    const mediaType = response.headers
+      .get("Content-Type")
+      ?.split(";", 1)[0]
+      ?.trim();
+    if (
+      mediaType !== "application/json" &&
+      mediaType !== "application/problem+json"
+    ) {
+      throw new ApiError(
+        "invalid-response",
+        "The service returned an unexpected response. Try again.",
+        safeId,
+        response.status,
+      );
+    }
+    let payload: unknown;
+    try {
+      payload = await response.json();
+    } catch (error: unknown) {
       if (signal?.aborted)
         throw new DOMException("Browser request cancelled.", "AbortError");
       if (timeout.aborted)
@@ -255,50 +247,76 @@ export function createApiClient(options: ApiClientOptions): ApiClient {
           "The request timed out. Try again.",
           safeId,
         );
-      if (!response.ok) {
-        if (
-          mediaType === "application/problem+json" &&
-          isProblem(payload) &&
-          payload.status === response.status
-        ) {
-          throw new ApiError(
-            "problem",
-            payload.detail,
-            payload.request_id,
-            response.status,
-            payload,
-          );
-        }
+      if (error instanceof TypeError)
         throw new ApiError(
-          "invalid-response",
-          "The service could not complete this request. Try again.",
+          "network",
+          "The connection was interrupted. Try again.",
           safeId,
-          response.status,
         );
-      }
+      if (!(error instanceof SyntaxError)) throw error;
+      throw new ApiError(
+        "invalid-response",
+        "The service returned an unreadable response. Try again.",
+        safeId,
+        response.status,
+      );
+    }
+    if (signal?.aborted)
+      throw new DOMException("Browser request cancelled.", "AbortError");
+    if (timeout.aborted)
+      throw new ApiError(
+        "timeout",
+        "The request timed out. Try again.",
+        safeId,
+      );
+    if (!response.ok) {
       if (
-        !object(payload) ||
-        !requestId(payload.request_id) ||
-        !("data" in payload)
+        mediaType === "application/problem+json" &&
+        isProblem(payload) &&
+        payload.status === response.status
       ) {
         throw new ApiError(
-          "invalid-response",
-          "The service returned an incomplete response. Try again.",
-          safeId,
-          response.status,
-        );
-      }
-      try {
-        return decode(payload.data);
-      } catch (error: unknown) {
-        if (!(error instanceof ContractError)) throw error;
-        throw new ApiError(
-          "invalid-response",
-          error.message,
+          "problem",
+          payload.detail,
           payload.request_id,
           response.status,
+          payload,
         );
       }
-    },
+      throw new ApiError(
+        "invalid-response",
+        "The service could not complete this request. Try again.",
+        safeId,
+        response.status,
+      );
+    }
+    if (
+      !object(payload) ||
+      !requestId(payload.request_id) ||
+      !("data" in payload)
+    ) {
+      throw new ApiError(
+        "invalid-response",
+        "The service returned an incomplete response. Try again.",
+        safeId,
+        response.status,
+      );
+    }
+    try {
+      return decode(payload.data);
+    } catch (error: unknown) {
+      if (!(error instanceof ContractError)) throw error;
+      throw new ApiError(
+        "invalid-response",
+        error.message,
+        payload.request_id,
+        response.status,
+      );
+    }
+  }
+  return {
+    get: (path, decode, signal) => request("GET", path, decode, signal),
+    patch: (path, body, decode, signal) =>
+      request("PATCH", path, decode, signal, body),
   };
 }
