@@ -12,7 +12,13 @@ from sqlalchemy import Connection, create_engine, text
 from sqlalchemy.pool import NullPool
 
 from benefitbridge.config import ConfigurationError, Settings
-from benefitbridge.db import documents, jobs, profiles, sources  # noqa: F401 -- register metadata
+from benefitbridge.db import (  # noqa: F401 -- register metadata
+    budget,
+    documents,
+    jobs,
+    profiles,
+    sources,
+)
 from benefitbridge.db.base import Base
 
 
