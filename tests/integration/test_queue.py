@@ -329,9 +329,12 @@ def test_public_role_cannot_receive_private_inputs_and_recovers_checkpoint(
     database, catalog, fake_clock
 ):
     role = "bb_queue_public_" + uuid4().hex
+    role_password = "synthetic-ms016-public-role-password"
     job_id = uuid4()
     with database[0].begin() as connection:
-        connection.execute(text(f'CREATE ROLE "{role}" LOGIN NOSUPERUSER NOBYPASSRLS'))
+        connection.execute(
+            text(f"CREATE ROLE \"{role}\" LOGIN NOSUPERUSER NOBYPASSRLS PASSWORD '{role_password}'")
+        )
         connection.execute(text(f'GRANT benefitbridge_public_worker TO "{role}"'))
         connection.execute(
             insert(JobRecord).values(
@@ -359,7 +362,7 @@ def test_public_role_cannot_receive_private_inputs_and_recovers_checkpoint(
         )
 
     async def scenario():
-        url = database[2].set(username=role)
+        url = database[2].set(username=role, password=role_password)
         async with queue_for(database, fake_clock, actor=None, url=url) as queue:
             await queue.dispatch()
             claim = await queue.claim(uuid4(), ("refresh",))

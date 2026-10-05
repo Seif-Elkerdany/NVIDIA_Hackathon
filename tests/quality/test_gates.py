@@ -110,10 +110,30 @@ def test_workflow_is_fail_closed_and_has_no_live_provider_job() -> None:
         assert "continue-on-error" not in step
         if "uses" in step:
             assert len(step["uses"].split("@")[1]) == 40
-    gates = steps[-1]["run"]
+    gates = next(
+        step["run"]
+        for step in steps
+        if step.get("name") == "Run fail-fast gates without external networking"
+    )
     assert "sudo --preserve-env=HOME unshare --net" in gates
     assert "--bounding-set=-all --no-new-privs" in gates
     assert "--suite unit" in gates and "--suite integration" in gates
     assert "scripts/check_contract.py" in gates
+    assert 'BB_TEST_DB_URL="$6"' in gates
+    assert "${BB_TEST_DB_URL:?PostgreSQL test DSN must be configured}" in gates
     assert "--suite live" not in json.dumps(workflow)
     assert "secrets." not in json.dumps(workflow)
+    database = next(
+        step["run"]
+        for step in steps
+        if step.get("name") == "Start isolated PostgreSQL 17 for integration gates"
+    )
+    compose = yaml.safe_load((ROOT / "compose.yaml").read_text())
+    assert compose["services"]["postgres"]["image"] in database
+    assert "--network none" in database and "listen_addresses=" in database
+    assert "--publish" not in database and "--network host" not in database
+    assert "target=/var/run/postgresql" in database
+    assert "BB_TEST_DB_URL=" in database and "?host=%s" in database
+    cleanup = next(step for step in steps if step.get("name") == "Remove isolated PostgreSQL")
+    assert cleanup["if"] == "always()"
+    assert "docker rm --force --volumes bb-ci-postgres" in cleanup["run"]

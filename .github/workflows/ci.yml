@@ -41,6 +41,38 @@ jobs:
           npm install --global --ignore-scripts pnpm@10.32.1
           uv sync --frozen --python 3.12.10
           pnpm --dir frontend install --frozen-lockfile --ignore-scripts
+      - name: Start isolated PostgreSQL 17 for integration gates
+        shell: bash
+        run: |
+          set -euo pipefail
+          image=postgres:17-bookworm@sha256:639ab7ceb90e13123085b741fb31ef493fba25463002f6da665352e7b534b652
+          docker pull "$image"
+          socket_dir="$RUNNER_TEMP/bb-postgres-socket"
+          mkdir -p "$socket_dir"
+          chmod 0777 "$socket_dir"
+          # Filesystem sockets remain reachable after unshare; no TCP route or port is opened.
+          docker run --detach --name bb-ci-postgres --network none \
+            --mount "type=bind,source=$socket_dir,target=/var/run/postgresql" \
+            --env POSTGRES_USER=bb_ci --env POSTGRES_DB=postgres \
+            --env POSTGRES_PASSWORD=synthetic-ci-postgres-password \
+            --env 'POSTGRES_INITDB_ARGS=--auth-local=scram-sha-256 --auth-host=scram-sha-256' \
+            "$image" postgres -c listen_addresses= -c unix_socket_permissions=0777
+          ready=false
+          for attempt in {1..60}; do
+            # Ignore the temporary initialization server; wait for the final instance.
+            if docker logs bb-ci-postgres 2>&1 | grep -q 'PostgreSQL init process complete; ready for start up.' && \
+               docker exec bb-ci-postgres pg_isready -U bb_ci -d postgres; then
+              ready=true
+              break
+            fi
+            sleep 1
+          done
+          if [ "$ready" != true ]; then
+            docker logs bb-ci-postgres
+            exit 1
+          fi
+          printf 'BB_TEST_DB_URL=postgresql+psycopg://bb_ci:synthetic-ci-postgres-password@localhost/postgres?host=%s\n' \
+            "$socket_dir" >> "$GITHUB_ENV"
       - name: Run fail-fast gates without external networking
         shell: bash
         run: |
@@ -69,5 +101,14 @@ jobs:
             exec setpriv --reuid="$1" --regid="$2" --clear-groups \
               --bounding-set=-all --no-new-privs \
               env -u NEBIUS_API_KEY -u TAVILY_API_KEY -u SUPABASE_SERVICE_ROLE_KEY \
-              PATH="$3" HTTP_PROXY= HTTPS_PROXY= ALL_PROXY= bash "$4"
-          ' _ "$(id -u)" "$(id -g)" "$PATH" "$gates" "$(readlink /proc/self/ns/net)"
+              PATH="$3" BB_TEST_DB_URL="$6" HTTP_PROXY= HTTPS_PROXY= ALL_PROXY= bash "$4"
+          ' _ "$(id -u)" "$(id -g)" "$PATH" "$gates" "$(readlink /proc/self/ns/net)" \
+            "${BB_TEST_DB_URL:?PostgreSQL test DSN must be configured}"
+      - name: Remove isolated PostgreSQL
+        if: always()
+        shell: bash
+        run: |
+          set -euo pipefail
+          if docker container inspect bb-ci-postgres >/dev/null 2>&1; then
+            docker rm --force --volumes bb-ci-postgres
+          fi
