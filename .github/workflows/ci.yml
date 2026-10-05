@@ -101,8 +101,9 @@ jobs:
             exec setpriv --reuid="$1" --regid="$2" --clear-groups \
               --bounding-set=-all --no-new-privs \
               env -u NEBIUS_API_KEY -u TAVILY_API_KEY -u SUPABASE_SERVICE_ROLE_KEY \
-              PATH="$3" HTTP_PROXY= HTTPS_PROXY= ALL_PROXY= bash "$4"
-          ' _ "$(id -u)" "$(id -g)" "$PATH" "$gates" "$(readlink /proc/self/ns/net)"
+              PATH="$3" BB_TEST_DB_URL="$6" HTTP_PROXY= HTTPS_PROXY= ALL_PROXY= bash "$4"
+          ' _ "$(id -u)" "$(id -g)" "$PATH" "$gates" "$(readlink /proc/self/ns/net)" \
+            "${BB_TEST_DB_URL:?PostgreSQL test DSN must be configured}"
       - name: Remove isolated PostgreSQL
         if: always()
         shell: bash
