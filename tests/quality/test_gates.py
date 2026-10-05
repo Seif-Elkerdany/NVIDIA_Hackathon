@@ -120,7 +120,7 @@ def test_workflow_is_fail_closed_and_has_no_live_provider_job() -> None:
     assert "--suite unit" in gates and "--suite integration" in gates
     assert "scripts/check_contract.py" in gates
     assert 'BB_TEST_DB_URL="$6"' in gates
-    assert '${BB_TEST_DB_URL:?PostgreSQL test DSN must be configured}' in gates
+    assert "${BB_TEST_DB_URL:?PostgreSQL test DSN must be configured}" in gates
     assert "--suite live" not in json.dumps(workflow)
     assert "secrets." not in json.dumps(workflow)
     database = next(
