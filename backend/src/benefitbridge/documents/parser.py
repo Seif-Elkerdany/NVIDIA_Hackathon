@@ -1,4 +1,4 @@
-"""Bounded digital PDF adapter (R03.01/03/04); no OCR, files, or provider calls.
+"""Bounded digital PDF adapter (R03.01/03/04); no OCR, applicant files, or provider calls.
 
 Call parse_pdf outside a database transaction (or await asyncio.to_thread).
 The subprocess receives raw bytes over stdin and returns only bounded page text.
@@ -390,7 +390,12 @@ def _worker_main() -> None:
         return
     sys.dont_write_bytecode = True
     sys.addaudithook(_deny_external_access)
-    from pypdf.errors import LimitReachedError, PyPdfError
+    try:
+        from pypdf.errors import LimitReachedError, PyPdfError
+    except MemoryError:
+        # Library initialization is inside the same OS memory budget as extraction.
+        sys.stdout.write(json.dumps({"failure": PdfFailure.MEMORY_LIMIT}))
+        return
 
     result: dict[str, list[str] | PdfFailure]
     try:

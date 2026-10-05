@@ -324,6 +324,27 @@ else:
     failure(pdf(["English"]), PdfFailure.MEMORY_LIMIT)
 
 
+def test_library_initialization_memory_failure_is_typed_and_does_not_read_input(monkeypatch):
+    code = """
+import builtins
+from benefitbridge.documents import parser
+original_import = builtins.__import__
+def bounded_import(name, *args, **kwargs):
+    if name == 'pypdf.errors':
+        raise MemoryError('synthetic library initialization failure')
+    return original_import(name, *args, **kwargs)
+class UnreadableInput:
+    @property
+    def buffer(self):
+        raise AssertionError('PDF input must not be read after initialization failed')
+sys.stdin = UnreadableInput()
+builtins.__import__ = bounded_import
+parser._worker_main()
+"""
+    monkeypatch.setattr(parser, "_command", lambda limits: [*probe_command(code), json.dumps({})])
+    failure(pdf(["English"]), PdfFailure.MEMORY_LIMIT)
+
+
 def test_missing_os_isolation_fails_closed(monkeypatch):
     code = """
 import json
