@@ -1,19 +1,37 @@
 """MS-017 owner profile routes, composed from the verified account runtime."""
 
+from collections.abc import AsyncIterator
+from contextlib import asynccontextmanager
 from typing import Annotated
 from uuid import UUID
 
-from fastapi import APIRouter, Depends, Header, Query, Request, Response
+from fastapi import APIRouter, Depends, FastAPI, Header, Query, Request, Response
 from fastapi.security import HTTPBearer
 
 from benefitbridge.api.accounts import RESPONSES, AccountRoute, authenticate, get_runtime
+from benefitbridge.config import ConfigurationError
 from benefitbridge.domain.dto import Envelope, Page, Profile
 from benefitbridge.domain.errors import DomainError
 from benefitbridge.domain.requests import PatchProfile
+from benefitbridge.ports import JobScope
 from benefitbridge.profiles.service import ProfileService
 
+
+@asynccontextmanager
+async def lifecycle(app: FastAPI) -> AsyncIterator[None]:
+    # Development can queue future MS-062 work; production must be able to consume it.
+    if app.state.settings.app_env == "production":
+        binding = app.state.dependencies.handlers.get("PROFILE_INVALIDATE")
+        if binding is None or binding.scope != JobScope.PRIVATE:
+            raise ConfigurationError("Production requires private PROFILE_INVALIDATE handler")
+    yield
+
+
 router = APIRouter(
-    prefix="/api/v1", route_class=AccountRoute, dependencies=[Depends(HTTPBearer(auto_error=False))]
+    prefix="/api/v1",
+    route_class=AccountRoute,
+    dependencies=[Depends(HTTPBearer(auto_error=False))],
+    lifespan=lifecycle,
 )
 ERRORS = {**RESPONSES, 409: RESPONSES[404]}
 

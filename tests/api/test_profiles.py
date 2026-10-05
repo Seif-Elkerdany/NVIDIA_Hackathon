@@ -18,6 +18,34 @@ account_client = accounts.account_client
 evidence = docs.evidence
 
 
+def test_profile_production_requires_private_invalidation_handler():
+    from fastapi import FastAPI
+    from fastapi.testclient import TestClient
+    from tests.ports.fakes import FakeStage
+
+    from benefitbridge.api import profiles
+    from benefitbridge.composition import Dependencies, HandlerBinding
+    from benefitbridge.config import ConfigurationError
+    from benefitbridge.domain.enums import RunKind
+    from benefitbridge.ports import JobScope
+
+    bindings = {kind.value: HandlerBinding(FakeStage()) for kind in RunKind}
+    app = FastAPI()
+    app.state.settings = Settings(_env_file=None).model_copy(update={"app_env": "production"})
+    app.state.dependencies = Dependencies(handlers=bindings)
+    app.include_router(profiles.router)
+    for binding in (None, HandlerBinding(FakeStage(), JobScope.PUBLIC)):
+        if binding is not None:
+            bindings["PROFILE_INVALIDATE"] = binding
+        app.state.dependencies = Dependencies(handlers=bindings)
+        with pytest.raises(ConfigurationError, match="PROFILE_INVALIDATE"), TestClient(app):
+            pass
+    bindings["PROFILE_INVALIDATE"] = HandlerBinding(FakeStage())
+    app.state.dependencies = Dependencies(handlers=bindings)
+    with TestClient(app):
+        pass
+
+
 @pytest.fixture
 def client(account_client):
     http, _, admin, clock = account_client
