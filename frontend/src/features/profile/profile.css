@@ -1,0 +1,187 @@
+.profile-form,
+.profile-section,
+.profile-history {
+  display: grid;
+  gap: var(--space-5);
+}
+.profile-form {
+  max-width: 54rem;
+}
+.profile-version {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  color: var(--ink-muted);
+  font-size: var(--text-sm);
+}
+.profile-fields {
+  display: grid;
+  gap: var(--space-4);
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+.profile-section-heading h2 {
+  margin: 0;
+  font-size: var(--text-lg);
+}
+.profile-section-heading p {
+  margin: 0.5rem 0 0;
+  color: var(--ink-muted);
+}
+.profile-field {
+  margin: 0;
+  min-width: 0;
+  padding: var(--space-4);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+.profile-field legend,
+.profile-entry legend {
+  font-weight: 600;
+  padding: 0 var(--space-2);
+}
+.profile-field label {
+  display: grid;
+  gap: var(--space-2);
+  font-weight: 600;
+}
+.profile-field input,
+.profile-field select,
+.profile-field textarea {
+  width: 100%;
+  min-width: 0;
+  min-height: 2.75rem;
+  padding: 0.6rem;
+  color: var(--ink);
+  background: var(--surface);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius);
+}
+.profile-field :is(input, select, textarea):focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
+}
+.profile-field textarea {
+  resize: vertical;
+}
+.profile-field p {
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+.profile-current {
+  font-weight: 500;
+}
+.profile-provenance {
+  display: grid;
+  gap: var(--space-1);
+  font-size: var(--text-sm);
+  color: var(--ink-muted);
+  overflow-wrap: anywhere;
+}
+.profile-provenance strong {
+  color: var(--ink);
+}
+.profile-pair {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-3);
+}
+.profile-pair p {
+  grid-column: 1/-1;
+  font-size: var(--text-sm);
+}
+.profile-entry {
+  display: grid;
+  gap: var(--space-3);
+  margin: 0;
+  min-width: 0;
+  border: 1px solid var(--border);
+  padding: var(--space-3);
+}
+.profile-check {
+  display: flex !important;
+  align-items: center;
+  gap: var(--space-3);
+}
+.profile-check input {
+  width: 1.2rem;
+  min-height: 1.2rem;
+  flex: none;
+}
+.profile-save {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-4);
+  border-top: 1px solid var(--border);
+  padding: var(--space-5) 0;
+}
+.profile-save p {
+  margin: 0;
+  max-width: 65ch;
+  color: var(--ink-muted);
+}
+.profile-save .button {
+  min-height: 2.75rem;
+}
+.profile-field-error {
+  color: var(--danger);
+}
+.profile-conflict {
+  padding: var(--space-5);
+  border-left: 4px solid var(--danger);
+  background: var(--danger-soft);
+}
+.profile-conflict h2 {
+  margin: 0;
+  font-size: var(--text-lg);
+}
+.profile-empty,
+.profile-success {
+  border-left: 3px solid var(--accent);
+  padding: var(--space-3) var(--space-4);
+  background: var(--accent-soft);
+}
+.profile-history {
+  max-width: 54rem;
+  margin-top: var(--space-6);
+  padding-top: var(--space-5);
+  border-top: 1px solid var(--border);
+}
+.profile-history > .button {
+  justify-self: start;
+}
+.profile-history-version {
+  padding: var(--space-3) 0;
+  border-bottom: 1px solid var(--border);
+}
+.profile-history-version summary {
+  cursor: pointer;
+  min-height: 2.75rem;
+  padding: 0.5rem 0;
+  font-weight: 600;
+}
+.profile-history-version dl > div {
+  padding: var(--space-3) 0;
+}
+.profile-history-version dt {
+  font-weight: 600;
+}
+.profile-history-version dd {
+  margin: var(--space-2) 0;
+  overflow-wrap: anywhere;
+}
+@media (max-width: 720px) {
+  .profile-fields {
+    grid-template-columns: 1fr;
+  }
+}
+@media (max-width: 380px) {
+  .profile-pair {
+    grid-template-columns: 1fr;
+  }
+}
