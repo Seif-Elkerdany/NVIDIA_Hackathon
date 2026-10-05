@@ -5,7 +5,7 @@ from contextlib import asynccontextmanager
 from typing import Annotated
 from uuid import UUID
 
-from fastapi import APIRouter, Depends, FastAPI, Header, Query, Request, Response
+from fastapi import APIRouter, Depends, FastAPI, Query, Request, Response
 from fastapi.security import HTTPBearer
 
 from benefitbridge.api.accounts import RESPONSES, AccountRoute, authenticate, get_runtime
@@ -71,15 +71,34 @@ async def get_profile(request: Request) -> Envelope[Profile]:
 
 
 @router.patch(
-    "/profile", operation_id="patch_profile", response_model=Envelope[Profile], responses=ERRORS
+    "/profile",
+    operation_id="patch_profile",
+    response_model=Envelope[Profile],
+    responses=ERRORS,
+    openapi_extra={
+        "parameters": [
+            {
+                "name": "Idempotency-Key",
+                "in": "header",
+                "required": True,
+                "schema": {
+                    "type": "string",
+                    "minLength": 16,
+                    "maxLength": 128,
+                    "pattern": "^[!-~]+$",
+                },
+            }
+        ]
+    },
 )
 async def patch_profile(
     request: Request,
     response: Response,
     payload: PatchProfile,
-    idempotency_key: Annotated[str | None, Header(alias="Idempotency-Key")] = None,
 ) -> Envelope[Profile]:
     validate_request(request)
+    # Missing required operation headers use the common 400 protocol error.
+    idempotency_key = request.headers.get("Idempotency-Key")
     if idempotency_key is None:
         raise DomainError("IDEMPOTENCY_KEY_REQUIRED", "An idempotency key is required.", 400)
     if (
