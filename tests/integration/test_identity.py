@@ -70,7 +70,10 @@ def database():
             config = Config(str(ROOT / "alembic.ini"))
             config.attributes["connection"] = connection
             command.upgrade(config, "head")
-            assert connection.scalar(text("SELECT version_num FROM alembic_version")) == "0003_jobs"
+            assert (
+                connection.scalar(text("SELECT version_num FROM alembic_version"))
+                == "0004_documents"
+            )
             # These literal values are fixture-owned, never caller-supplied SQL.
             for role in (app_role, admin_role):
                 connection.execute(
@@ -190,7 +193,9 @@ def test_migration_cli_reuses_persisted_head(database):
     )
     assert result.returncode == 0, "Alembic CLI failed to load the persisted migration head"
     with admin.connect() as connection:
-        assert connection.scalar(text("SELECT version_num FROM alembic_version")) == "0003_jobs"
+        assert (
+            connection.scalar(text("SELECT version_num FROM alembic_version")) == "0004_documents"
+        )
 
 
 def test_migration_matches_typed_metadata_and_initial_empty_profile(database):
