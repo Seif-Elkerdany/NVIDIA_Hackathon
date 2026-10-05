@@ -12,7 +12,7 @@ from sqlalchemy import Connection, create_engine, text
 from sqlalchemy.pool import NullPool
 
 from benefitbridge.config import ConfigurationError, Settings
-from benefitbridge.db import profiles  # noqa: F401 -- register all current identity tables
+from benefitbridge.db import documents, jobs, profiles, sources  # noqa: F401 -- register metadata
 from benefitbridge.db.base import Base
 
 
