@@ -28,7 +28,12 @@ def test_export_keeps_shared_catalog_and_all_merged_routes():
     assert first == generated_files()
     assert build_document(FastAPI()) == build_openapi()
     document = json.loads(first["openapi.json"])
-    assert set(document["paths"]) == {"/api/v1/me"}
+    assert set(document["paths"]) == {
+        "/api/v1/me",
+        "/api/v1/profile",
+        "/api/v1/profile/versions",
+        "/api/v1/profile/versions/{profile_version_id}",
+    }
     shared = build_openapi()["components"]["schemas"]
     assert all(document["components"]["schemas"][name] == schema for name, schema in shared.items())
     for name, content in first.items():

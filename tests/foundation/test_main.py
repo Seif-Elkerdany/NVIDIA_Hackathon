@@ -10,7 +10,12 @@ from benefitbridge.config import ConfigurationError, Settings
 
 def test_development_app_exposes_only_merged_routes():
     app = main.create_app(Settings())
-    assert set(app.openapi()["paths"]) == {"/api/v1/me"}
+    assert set(app.openapi()["paths"]) == {
+        "/api/v1/me",
+        "/api/v1/profile",
+        "/api/v1/profile/versions",
+        "/api/v1/profile/versions/{profile_version_id}",
+    }
     with TestClient(app) as client:
         assert client.get("/api/v1/health/live").status_code == 404
         assert client.get("/docs").status_code == 404
